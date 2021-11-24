@@ -1,13 +1,17 @@
 package com.yfvia.wiki.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class TestController {
 
-    @RequestMapping("hello")
-    public String hello(){
+    @GetMapping("/hello")
+    public String hello() {
         return "Hello via!";
+    }
+
+    @PostMapping("/hello/post")
+    public String postHello(String name) {
+        return "Hello via!" + name;
     }
 }
