@@ -9,3 +9,5 @@ Content-Type: application/x-www-form-urlencoded
 name=test
 
 ###
+
+GET http://localhost:8888/testList
