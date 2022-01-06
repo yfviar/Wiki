@@ -3,8 +3,8 @@
 <mapper namespace="com.yfvia.wiki.mapper.TestMapper">
 
     <select id="list" resultType="com.yfvia.wiki.domain.Test">
-        select id, name
-        from wiki.test;
+        select id, name, password
+        from test;
 
     </select>
 
