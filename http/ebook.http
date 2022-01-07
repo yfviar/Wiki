@@ -1,2 +1,2 @@
-GET http://localhost:8888/ebook/list
+GET http://localhost:8888/ebook/list?name=入门
 
