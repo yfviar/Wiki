@@ -8,6 +8,7 @@ import com.yfvia.wiki.mapper.DemoMapper;
 import com.yfvia.wiki.mapper.EbookMapper;
 import com.yfvia.wiki.req.EbookReq;
 import com.yfvia.wiki.resp.EbookResp;
+import com.yfvia.wiki.utils.CopyUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,13 +29,6 @@ public class EbookService {
         criteria.andNameLike("%" + req.getName() + "%");
         List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
 
-        ArrayList<EbookResp> ebookResps = new ArrayList<>();
-        for (Ebook ebook : ebooks) {
-            EbookResp ebookResp = new EbookResp();
-            BeanUtils.copyProperties(ebook, ebookResp);
-            ebookResps.add(ebookResp);
-        }
-
-        return ebookResps;
+        return CopyUtil.copyList(ebooks, EbookResp.class);
     }
 }
