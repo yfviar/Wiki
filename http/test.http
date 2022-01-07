@@ -10,4 +10,8 @@ name=test
 
 ###
 
-GET http://localhost:8888/testList
+GET http://localhost:8888/test/list
+
+###
+
+GET http://localhost:8888/demo/list

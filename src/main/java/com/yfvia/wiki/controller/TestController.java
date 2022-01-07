@@ -30,7 +30,7 @@ public class TestController {
         return "Hello via!" + name;
     }
 
-    @GetMapping("/testList")
+    @GetMapping("/test/list")
     public List<Test> list() {
         return testService.list();
     }

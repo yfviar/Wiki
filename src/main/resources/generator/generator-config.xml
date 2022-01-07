@@ -40,7 +40,8 @@
                              targetPackage="com.yfvia.wiki.mapper"
                              targetProject=".\src\main\java"/>
         <!-- 指定数据库表 -->
-        <table tableName="demo" domainObjectName="Demo"/>
+<!--        <table tableName="demo" domainObjectName="Demo"/>-->
+        <table tableName="ebook" />
 
 
     </context>
