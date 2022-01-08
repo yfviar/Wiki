@@ -45,25 +45,47 @@
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>
+
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      Hello Via!
-      <pre>
-        {{ ebooks }}
-        {{ ebooks2 }}
-      </pre>
+      <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
+        <template #renderItem="{ item }">
+          <a-list-item key="item.name">
+            <template #actions>
+          <span v-for="{ type, text } in actions" :key="type">
+            <component :is="type" style="margin-right: 8px" />
+            {{ text }}
+          </span>
+            </template>
+            <a-list-item-meta :description="item.description">
+              <template #title>
+                <a :href="item.href">{{ item.name }}</a>
+              </template>
+              <template #avatar><a-avatar :src="item.cover" /></template>
+            </a-list-item-meta>
+          </a-list-item>
+        </template>
+      </a-list>
     </a-layout-content>
   </a-layout>
 </template>
 
 <script lang="ts">
 import {defineComponent, onMounted, ref, reactive, toRef} from 'vue';
+import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
 import axios from "axios";
+
+
 
 
 export default defineComponent({
   name: 'Home',
+  components:{
+    StarOutlined,
+    LikeOutlined,
+    MessageOutlined,
+  },
   setup() {
     console.log("setup");
     //响应式数据:第一种ref()
@@ -73,7 +95,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log("onMounted");
-      axios.get("http://localhost:8888/ebook/list?name=Spring").then((response) => {
+      axios.get("http://localhost:8888/ebook/list").then((response) => {
         const data = response.data;
         ebooks.value = data.content;
         ebooks1.books = data.content;
@@ -81,10 +103,23 @@ export default defineComponent({
       });
     });
 
+    const pagination = {
+      onChange: (page: number) => {
+        console.log(page);
+      },
+      pageSize: 3,
+    };
+    const actions: Record<string, string>[] = [
+      { type: 'StarOutlined', text: '156' },
+      { type: 'LikeOutlined', text: '156' },
+      { type: 'MessageOutlined', text: '2' },
+    ];
     return {
+      pagination,
+      actions,
       ebooks,
       ebooks2: toRef(ebooks1, "books")
-    }
-  }
+    };
+  },
 });
 </script>
