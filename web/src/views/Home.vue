@@ -54,7 +54,7 @@
           <a-list-item key="item.name">
             <template #actions>
           <span v-for="{ type, text } in actions" :key="type">
-            <component :is="type" style="margin-right: 8px" />
+            <component :is="type" style="margin-right: 8px"/>
             {{ text }}
           </span>
             </template>
@@ -62,7 +62,9 @@
               <template #title>
                 <a :href="item.href">{{ item.name }}</a>
               </template>
-              <template #avatar><a-avatar :src="item.cover" /></template>
+              <template #avatar>
+                <a-avatar :src="item.cover"/>
+              </template>
             </a-list-item-meta>
           </a-list-item>
         </template>
@@ -73,15 +75,13 @@
 
 <script lang="ts">
 import {defineComponent, onMounted, ref, reactive, toRef} from 'vue';
-import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
+import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
 import axios from "axios";
-
-
 
 
 export default defineComponent({
   name: 'Home',
-  components:{
+  components: {
     StarOutlined,
     LikeOutlined,
     MessageOutlined,
@@ -110,9 +110,9 @@ export default defineComponent({
       pageSize: 3,
     };
     const actions: Record<string, string>[] = [
-      { type: 'StarOutlined', text: '156' },
-      { type: 'LikeOutlined', text: '156' },
-      { type: 'MessageOutlined', text: '2' },
+      {type: 'StarOutlined', text: '156'},
+      {type: 'LikeOutlined', text: '156'},
+      {type: 'MessageOutlined', text: '2'},
     ];
     return {
       pagination,
@@ -123,3 +123,12 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.ant-avatar {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 8%;
+  margin: 5px 0;
+}
+</style>
