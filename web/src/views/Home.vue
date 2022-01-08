@@ -49,12 +49,16 @@
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
       Hello Via!
+      <pre>
+        {{ ebooks }}
+        {{ ebooks2 }}
+      </pre>
     </a-layout-content>
   </a-layout>
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, onMounted, ref, reactive, toRef} from 'vue';
 import axios from "axios";
 
 
@@ -62,9 +66,25 @@ export default defineComponent({
   name: 'Home',
   setup() {
     console.log("setup");
-    axios.get("http://localhost:8888/ebook/list?name=Spring").then((response) => {
-      console.log(response)
-    })
+    //响应式数据:第一种ref()
+    const ebooks = ref();
+    //响应式数据：第二种
+    const ebooks1 = reactive({books: []});
+
+    onMounted(() => {
+      console.log("onMounted");
+      axios.get("http://localhost:8888/ebook/list?name=Spring").then((response) => {
+        const data = response.data;
+        ebooks.value = data.content;
+        ebooks1.books = data.content;
+        console.log(response)
+      });
+    });
+
+    return {
+      ebooks,
+      ebooks2: toRef(ebooks1, "books")
+    }
   }
 });
 </script>
