@@ -87,14 +87,13 @@ export default defineComponent({
     MessageOutlined,
   },
   setup() {
-    console.log("setup");
+
     //响应式数据:第一种ref()
     const ebooks = ref();
     //响应式数据：第二种
     const ebooks1 = reactive({books: []});
 
     onMounted(() => {
-      console.log("onMounted");
       axios.get("/ebook/list").then((response) => {
         const data = response.data;
         ebooks.value = data.content;
