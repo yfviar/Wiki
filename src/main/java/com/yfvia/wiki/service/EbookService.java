@@ -1,5 +1,7 @@
 package com.yfvia.wiki.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yfvia.wiki.domain.Demo;
 import com.yfvia.wiki.domain.DemoExample;
 import com.yfvia.wiki.domain.Ebook;
@@ -9,6 +11,8 @@ import com.yfvia.wiki.mapper.EbookMapper;
 import com.yfvia.wiki.req.EbookReq;
 import com.yfvia.wiki.resp.EbookResp;
 import com.yfvia.wiki.utils.CopyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,14 +28,20 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req) {
+    private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
 
+    public List<EbookResp> list(EbookReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
+
+        PageHelper.startPage(1, 3);
         List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
+
+        PageInfo<Ebook> pageInfo = new PageInfo<>(ebooks);
+        LOG.info("总行数：{}", pageInfo.getTotal());
 
         return CopyUtil.copyList(ebooks, EbookResp.class);
     }
