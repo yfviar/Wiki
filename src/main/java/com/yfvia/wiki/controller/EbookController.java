@@ -5,6 +5,7 @@ import com.yfvia.wiki.domain.Ebook;
 import com.yfvia.wiki.req.EbookReq;
 import com.yfvia.wiki.resp.CommonResp;
 import com.yfvia.wiki.resp.EbookResp;
+import com.yfvia.wiki.resp.PageResp;
 import com.yfvia.wiki.service.DemoService;
 import com.yfvia.wiki.service.EbookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class EbookController {
 
     @GetMapping("/ebook/list")
     public CommonResp list(EbookReq req) {
-        CommonResp<List<EbookResp>> resp = new CommonResp<>();
+        CommonResp<PageResp<EbookResp>> resp = new CommonResp<>();
         resp.setContent(ebookService.list(req));
         return resp;
     }

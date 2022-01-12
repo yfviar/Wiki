@@ -1,6 +1,6 @@
 package com.yfvia.wiki.resp;
 
-public class EbookResp {
+public class EbookResp{
 
     private String name;
 

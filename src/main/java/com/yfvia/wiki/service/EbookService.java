@@ -10,6 +10,7 @@ import com.yfvia.wiki.mapper.DemoMapper;
 import com.yfvia.wiki.mapper.EbookMapper;
 import com.yfvia.wiki.req.EbookReq;
 import com.yfvia.wiki.resp.EbookResp;
+import com.yfvia.wiki.resp.PageResp;
 import com.yfvia.wiki.utils.CopyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,19 +31,22 @@ public class EbookService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
 
-    public List<EbookResp> list(EbookReq req) {
+    public PageResp<EbookResp> list(EbookReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
 
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(req.getPageNum(), req.getPageSize());
         List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebooks);
         LOG.info("总行数：{}", pageInfo.getTotal());
+        PageResp<EbookResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(CopyUtil.copyList(ebooks, EbookResp.class));
 
-        return CopyUtil.copyList(ebooks, EbookResp.class);
+        return pageResp;
     }
 }

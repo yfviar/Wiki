@@ -1,13 +1,16 @@
-package com.yfvia.wiki.req;
+package com.yfvia.wiki.resp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EbookReq extends PageReq{
-    private Long id;
-    private String name;
+public class PageResp<T> {
+    private Long total;
+
+    private List<T> list;
 }
