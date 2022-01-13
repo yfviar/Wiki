@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PageReq {
-    private Integer pageNum;
+    private Integer page;
 
-    private Integer pageSize;
+    private Integer size;
 }
