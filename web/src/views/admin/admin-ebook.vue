@@ -22,7 +22,7 @@
         <!--        按钮-->
         <template v-slot:action="{text,record}">
           <a-space size="small">
-            <a-button type="primary" @click="edit">
+            <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
             <a-button type="danger">
@@ -42,7 +42,23 @@
       :confirm-loading="modalLoading"
       @ok="handleModalOk"
   >
-    <p>test</p>
+    <a-form :model="ebook" :label-col="{span:6}">
+      <a-form-item label="封面">
+        <a-input :value="ebook.cover"/>
+      </a-form-item>
+      <a-form-item label="名称">
+        <a-input :value="ebook.name"/>
+      </a-form-item>
+      <a-form-item label="分类1">
+        <a-input :value="ebook.name"/>
+      </a-form-item>
+      <a-form-item label="分类2">
+        <a-input :value="ebook.name"/>
+      </a-form-item>
+      <a-form-item label="描述">
+        <a-input :value="ebook.name"/>
+      </a-form-item>
+    </a-form>
   </a-modal>
 </template>
 
@@ -133,12 +149,16 @@ export default defineComponent({
     const modalVisible = ref(false);
     //弹窗提交loading效果
     const modalLoading = ref(false);
+    //每一本书
+    const ebook = ref({});
+
     /**
      * edit按钮方法
      */
-    const edit = () => {
+    const edit = (record: any) => {
       console.log("edit");
       modalVisible.value = true;
+      ebook.value = record;
     }
     /**
      * 编辑弹窗确认提交
@@ -175,6 +195,7 @@ export default defineComponent({
       handleTableChange,
       modalVisible,
       modalLoading,
+      ebook,
       edit,
       handleModalOk
     };
