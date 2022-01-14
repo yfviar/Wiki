@@ -1,4 +1,5 @@
 <template>
+  <!--  布局-->
   <a-layout>
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
@@ -14,12 +15,14 @@
           :loading="loading"
           @change="handleTableChange"
       >
+        <!--        头像-->
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar"/>
         </template>
+        <!--        按钮-->
         <template v-slot:action="{text,record}">
           <a-space size="small">
-            <a-button type="primary">
+            <a-button type="primary" @click="edit">
               编辑
             </a-button>
             <a-button type="danger">
@@ -27,10 +30,20 @@
             </a-button>
           </a-space>
         </template>
+
       </a-table>
 
     </a-layout-content>
   </a-layout>
+
+  <a-modal
+      title="电子书表单"
+      :visible="modalVisible"
+      :confirm-loading="modalLoading"
+      @ok="handleModalOk"
+  >
+    <p>test</p>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -40,14 +53,18 @@ import axios from "axios";
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
+    //电子书数据
     const ebooks = ref();
+
+    //分页
     const pagination = ref({
       current: 1,
       pageSize: 4,
       total: 0
     });
+    //加载电子书
     const loading = ref(false);
-
+    //电子书列
     const columns = [
       {
         title: '封面',
@@ -101,7 +118,9 @@ export default defineComponent({
         pagination.value.total = data.content.total;
       });
     };
-
+    /**
+     * 处理分页方法
+     */
     const handleTableChange = (pagination: any) => {
       console.log("自带的分页参数：" + pagination);
       handleQuery({
@@ -110,6 +129,33 @@ export default defineComponent({
       });
     };
 
+    //显示弹窗
+    const modalVisible = ref(false);
+    //弹窗提交loading效果
+    const modalLoading = ref(false);
+    /**
+     * edit按钮方法
+     */
+    const edit = () => {
+      console.log("edit");
+      modalVisible.value = true;
+    }
+    /**
+     * 编辑弹窗确认提交
+     */
+    const handleModalOk = () => {
+      console.log("ok");
+      modalLoading.value = true;
+
+      setTimeout(() => {
+        modalVisible.value = false;
+        modalLoading.value = false;
+      }, 2000);
+    }
+
+    /**
+     * 组件挂载完成后执行的函数
+     */
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -117,12 +163,20 @@ export default defineComponent({
       });
     });
 
+
+    /**
+     * 返回组件所需要的变量和方法
+     */
     return {
       ebooks,
       pagination,
       columns,
       loading,
-      handleTableChange
+      handleTableChange,
+      modalVisible,
+      modalLoading,
+      edit,
+      handleModalOk
     };
 
   }

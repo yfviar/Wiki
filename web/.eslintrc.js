@@ -14,8 +14,8 @@ module.exports = {
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-        'vue/no-unused-components': 'off',
-        'vue/no-unused-vars': 'off',
-        '@typescript-eslint/no-explicit-any': 'off'
+        'vue/no-unused-components': 0,
+        'vue/no-unused-vars': 0,
+        '@typescript-eslint/no-explicit-any': 0
     }
 }
