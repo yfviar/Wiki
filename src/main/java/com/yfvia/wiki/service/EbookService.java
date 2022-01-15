@@ -10,8 +10,10 @@ import com.yfvia.wiki.req.EbookSaveReq;
 import com.yfvia.wiki.resp.EbookQueryResp;
 import com.yfvia.wiki.resp.PageResp;
 import com.yfvia.wiki.utils.CopyUtil;
+import com.yfvia.wiki.utils.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -23,8 +25,14 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
+    @Autowired
+    private SnowFlake snowFlake;
+
     private static final Logger LOG = LoggerFactory.getLogger(EbookService.class);
 
+    /**
+     * 查询电子书数据
+     */
     public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
@@ -44,6 +52,9 @@ public class EbookService {
         return pageResp;
     }
 
+    /**
+     * 查询所有的电子书数据
+     */
     public PageResp<EbookQueryResp> all() {
         List<Ebook> ebooks = ebookMapper.selectByExample(new EbookExample());
         PageResp<EbookQueryResp> resp = new PageResp<>();
@@ -52,10 +63,17 @@ public class EbookService {
         return resp;
     }
 
+    /**
+     * 保存电子书数据
+     */
     public Boolean save(EbookSaveReq req) {
 
         if (ObjectUtils.isEmpty(req.getId())) {
             Ebook ebook = CopyUtil.copy(req, Ebook.class);
+            ebook.setId(snowFlake.nextId());
+            ebook.setDocCount(0);
+            ebook.setViewCount(0);
+            ebook.setVoteCount(0);
             int res = ebookMapper.insert(ebook);
             if (res != 1) return false;
             return true;

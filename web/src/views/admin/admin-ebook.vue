@@ -7,6 +7,11 @@
       <div class="about">
         <h1>电子书管理</h1>
       </div>
+      <div>
+        <a-button type="danger" @click="add()" size="large">
+          新增
+        </a-button>
+      </div>
       <a-table
           :columns="columns"
           :row-key="record => record.id"
@@ -38,8 +43,8 @@
 
   <a-modal
       title="电子书表单"
-      :visible="modalVisible"
-      :confirm-loading="modalLoading"
+      v-model:visible="modalVisible"
+      v-model:confirm-loading="modalLoading"
       @ok="handleModalOk"
   >
     <a-form :model="ebook" :label-col="{span:6}">
@@ -167,6 +172,15 @@ export default defineComponent({
       modalVisible.value = true;
       ebook.value = record;
     }
+
+    /**
+     * 新增
+     */
+    const add = () => {
+      modalVisible.value = true;
+      ebook.value = {};
+    }
+
     /**
      * 编辑弹窗确认提交
      */
@@ -210,11 +224,15 @@ export default defineComponent({
       columns,
       loading,
       handleTableChange,
+
       modalVisible,
       modalLoading,
       ebook,
       edit,
-      handleModalOk
+      handleModalOk,
+
+      add
+
     };
 
   }
