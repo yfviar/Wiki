@@ -1,2 +1,11 @@
 GET http://localhost:8888/ebook/list?page=1&size=3
 
+
+###
+POST http://localhost:8888/ebook/save
+Content-Type: application/json
+
+{
+  "name": "via"
+}
+

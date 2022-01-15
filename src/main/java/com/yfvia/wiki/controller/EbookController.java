@@ -1,30 +1,48 @@
 package com.yfvia.wiki.controller;
 
-import com.yfvia.wiki.domain.Demo;
-import com.yfvia.wiki.domain.Ebook;
-import com.yfvia.wiki.req.EbookReq;
+import com.yfvia.wiki.req.EbookQueryReq;
+import com.yfvia.wiki.req.EbookSaveReq;
 import com.yfvia.wiki.resp.CommonResp;
-import com.yfvia.wiki.resp.EbookResp;
+import com.yfvia.wiki.resp.EbookQueryResp;
 import com.yfvia.wiki.resp.PageResp;
-import com.yfvia.wiki.service.DemoService;
 import com.yfvia.wiki.service.EbookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/ebook")
 public class EbookController {
 
     @Autowired
     EbookService ebookService;
 
-    @GetMapping("/ebook/list")
-    public CommonResp list(EbookReq req) {
-        System.out.println("req:" + req.getPage());
-        CommonResp<PageResp<EbookResp>> resp = new CommonResp<>();
+    @GetMapping("/list")
+    public CommonResp list(EbookQueryReq req) {
+        CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
         resp.setContent(ebookService.list(req));
+        return resp;
+    }
+
+    @GetMapping("/all")
+    public CommonResp all() {
+        CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
+        resp.setContent(ebookService.all());
+        return resp;
+    }
+
+    @PostMapping("/save")
+    public CommonResp save(@RequestBody EbookSaveReq req) {
+        System.out.println("Save Req:" + req);
+
+        Boolean res = ebookService.save(req);
+
+        CommonResp<Boolean> resp = new CommonResp<>();
+        if (!res) {
+            resp.setMessage("保存失败！");
+            return resp;
+        }
+        resp.setMessage("保存成功");
+
         return resp;
     }
 }
