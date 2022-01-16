@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,7 +48,15 @@ public class EbookService {
         LOG.info("总行数：{}", pageInfo.getTotal());
         PageResp<EbookQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(CopyUtil.copyList(ebooks, EbookQueryResp.class));
+
+        List<EbookQueryResp> copyList = new ArrayList<>();
+        for (Ebook ebook : ebooks) {
+            EbookQueryResp copyEbook = CopyUtil.copy(ebook, EbookQueryResp.class);
+            copyEbook.setId(ebook.getId().toString());
+            copyList.add(copyEbook);
+        }
+
+        pageResp.setList(copyList);
 
         return pageResp;
     }
@@ -59,7 +68,15 @@ public class EbookService {
         List<Ebook> ebooks = ebookMapper.selectByExample(new EbookExample());
         PageResp<EbookQueryResp> resp = new PageResp<>();
         resp.setTotal(0L);
-        resp.setList(CopyUtil.copyList(ebooks, EbookQueryResp.class));
+
+        List<EbookQueryResp> copyList = new ArrayList<>();
+        for (Ebook ebook : ebooks) {
+            EbookQueryResp copyEbook = CopyUtil.copy(ebook, EbookQueryResp.class);
+            copyEbook.setId(ebook.getId().toString());
+            copyList.add(copyEbook);
+        }
+
+        resp.setList(copyList);
         return resp;
     }
 
@@ -79,13 +96,26 @@ public class EbookService {
             return true;
         }
 
-        Ebook ebook = ebookMapper.selectByPrimaryKey(req.getId());
+        Ebook ebook = ebookMapper.selectByPrimaryKey(Long.parseLong(req.getId()));
         if (ObjectUtils.isEmpty(ebook)) {
             return false;
         }
         Ebook newEbook = CopyUtil.copy(req, Ebook.class);
         int res = ebookMapper.updateByPrimaryKey(newEbook);
         if (res != 1) return false;
+        return true;
+    }
+
+
+    /**
+     * 删除电子书
+     */
+    public Boolean delete(Long id) {
+        if (ObjectUtils.isEmpty(id)) return false;
+
+        int res = ebookMapper.deleteByPrimaryKey(id);
+        if (res != 1) return false;
+
         return true;
     }
 

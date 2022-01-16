@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EbookQueryReq extends PageReq{
-    private Long id;
+    private String id;
     private String name;
 }

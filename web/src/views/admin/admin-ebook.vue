@@ -30,7 +30,7 @@
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
-            <a-button type="danger">
+            <a-button type="danger" @click="remove(record.id)">
               删除
             </a-button>
           </a-space>
@@ -68,8 +68,10 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from "vue";
+import {defineComponent, onMounted, ref, createVNode} from "vue";
 import axios from "axios";
+import {Modal} from 'ant-design-vue';
+import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 
 export default defineComponent({
   name: 'AdminEbook',
@@ -167,8 +169,6 @@ export default defineComponent({
      * edit按钮方法
      */
     const edit = (record: any) => {
-
-      console.log("edit id:" + record.id);
       modalVisible.value = true;
       ebook.value = record;
     }
@@ -180,27 +180,77 @@ export default defineComponent({
       modalVisible.value = true;
       ebook.value = {};
     }
+    /**
+     * 删除
+     */
+
+    const remove = (id: number) => {
+
+      Modal.confirm({
+        title: '删除后不可恢复，确认删除？',
+        icon: createVNode(ExclamationCircleOutlined),
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk() {
+          axios.delete("ebook/delete/" + id).then((response) => {
+            const data = response.data;
+            if (data.success) {
+              Modal.success({
+                title: '删除成功'
+              });
+            } else {
+              Modal.error({
+                title: '删除失败'
+              });
+            }
+
+            //重新加载列表
+            handleQuery({
+              page: 1,
+              size: pagination.value.pageSize
+            });
+
+
+          });
+        },
+        onCancel() {
+          console.log('取消');
+        },
+      });
+
+    }
 
     /**
      * 编辑弹窗确认提交
      */
     const handleModalOk = () => {
-      console.log("ok");
+
       modalLoading.value = true;
       axios.post("/ebook/save", ebook.value).then((response) => {
         const data = response.data;
-        console.log(data);
 
         //如果成功了
         if (data.success) {
           modalVisible.value = false;
           modalLoading.value = false;
+          Modal.success({
+            title: '添加或修改成功'
+          });
           //重新加载列表
           handleQuery({
             page: 1,
             size: pagination.value.pageSize
           });
+        } else {
+
+          modalLoading.value = false;
+          Modal.error({
+            title: '添加或修改失败'
+          });
         }
+
+
       });
     }
 
@@ -231,7 +281,8 @@ export default defineComponent({
       edit,
       handleModalOk,
 
-      add
+      add,
+      remove
 
     };
 

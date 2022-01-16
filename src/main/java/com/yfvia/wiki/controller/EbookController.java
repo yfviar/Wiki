@@ -32,16 +32,30 @@ public class EbookController {
 
     @PostMapping("/save")
     public CommonResp save(@RequestBody EbookSaveReq req) {
-        System.out.println("Save Req:" + req);
 
         Boolean res = ebookService.save(req);
 
         CommonResp<Boolean> resp = new CommonResp<>();
         if (!res) {
             resp.setMessage("保存失败！");
-            return resp;
+            resp.setSuccess(false);
+        } else {
+            resp.setMessage("保存成功");
         }
-        resp.setMessage("保存成功");
+
+        return resp;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public CommonResp delete(@PathVariable Long id) {
+        Boolean res = ebookService.delete(id);
+        CommonResp resp = new CommonResp();
+        if (!res) {
+            resp.setMessage("删除失败");
+            resp.setSuccess(false);
+        } else {
+            resp.setMessage("删除成功");
+        }
 
         return resp;
     }
