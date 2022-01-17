@@ -70,8 +70,9 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref, createVNode} from "vue";
 import axios from "axios";
-import {Modal} from 'ant-design-vue';
+import {Modal, message} from 'ant-design-vue';
 import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
+
 
 export default defineComponent({
   name: 'AdminEbook',
@@ -82,7 +83,7 @@ export default defineComponent({
     //分页
     const pagination = ref({
       current: 1,
-      pageSize: 4,
+      pageSize: 5,
       total: 0
     });
     //加载电子书
@@ -141,10 +142,14 @@ export default defineComponent({
       }).then((response) => {
         loading.value = false;
         const data = response.data;
-        ebooks.value = data.content.list;
-        //重置分页按钮
-        pagination.value.current = p.page;
-        pagination.value.total = data.content.total;
+        if (data.success) {
+          ebooks.value = data.content.list;
+          //重置分页按钮
+          pagination.value.current = p.page;
+          pagination.value.total = data.content.total;
+        } else {
+          message.error(data.message);
+        }
       });
     };
     /**
