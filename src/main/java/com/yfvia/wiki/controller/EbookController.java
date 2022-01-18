@@ -33,18 +33,10 @@ public class EbookController {
     }
 
     @PostMapping("/save")
-    public CommonResp save(@RequestBody EbookSaveReq req) {
+    public CommonResp save(@Valid @RequestBody EbookSaveReq req) {
 
-        Boolean res = ebookService.save(req);
-
+        ebookService.save(req);
         CommonResp<Boolean> resp = new CommonResp<>();
-        if (!res) {
-            resp.setMessage("保存失败！");
-            resp.setSuccess(false);
-        } else {
-            resp.setMessage("保存成功");
-        }
-
         return resp;
     }
 

@@ -9,7 +9,7 @@ POST http://localhost:8888/ebook/save
 Content-Type: application/json
 
 {
-  "name": "via"
+  "name": ""
 }
 
 ###

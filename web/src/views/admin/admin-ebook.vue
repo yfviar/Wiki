@@ -83,7 +83,7 @@ export default defineComponent({
     //分页
     const pagination = ref({
       current: 1,
-      pageSize: 5,
+      pageSize: 10,
       total: 0
     });
     //加载电子书
@@ -234,11 +234,11 @@ export default defineComponent({
       modalLoading.value = true;
       axios.post("/ebook/save", ebook.value).then((response) => {
         const data = response.data;
+        modalLoading.value = false;
 
         //如果成功了
         if (data.success) {
           modalVisible.value = false;
-          modalLoading.value = false;
           Modal.success({
             title: '添加或修改成功'
           });
@@ -248,11 +248,7 @@ export default defineComponent({
             size: pagination.value.pageSize
           });
         } else {
-
-          modalLoading.value = false;
-          Modal.error({
-            title: '添加或修改失败'
-          });
+          message.error(data.message);
         }
 
 
