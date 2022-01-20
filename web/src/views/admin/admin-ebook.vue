@@ -81,6 +81,7 @@ import {defineComponent, onMounted, ref, createVNode} from "vue";
 import axios from "axios";
 import {Modal, message} from 'ant-design-vue';
 import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
+import {Tool} from "@/util/tool";
 
 
 export default defineComponent({
@@ -194,7 +195,7 @@ export default defineComponent({
      */
     const edit = (record: any) => {
       modalVisible.value = true;
-      ebook.value = record;
+      ebook.value = Tool.copy(record);
     }
 
     /**
