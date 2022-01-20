@@ -4,13 +4,22 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <div class="about">
-        <h1>电子书管理</h1>
-      </div>
       <div>
-        <a-button type="danger" @click="add()" size="large">
-          新增
-        </a-button>
+        <a-space size="small">
+          <a-input-search
+
+              v-model:value="param.name"
+              placeholder="请输入书籍名称"
+              size="large"
+              style="width: 300px"
+              enter-button
+              @search="handleQuery({page:1,size:pagination.pageSize})"
+          />
+
+          <a-button type="danger" @click="add()" size="large">
+            新增
+          </a-button>
+        </a-space>
       </div>
       <a-table
           :columns="columns"
@@ -77,6 +86,13 @@ import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
+
+    //封装搜索条件
+    // const param = ref({
+    //   name: ''
+    // });
+    const param = ref();
+    param.value = {};
     //电子书数据
     const ebooks = ref();
 
@@ -136,6 +152,7 @@ export default defineComponent({
       loading.value = true;
       axios.get("/ebook/list", {
         params: {
+          name: param.value.name,
           page: p.page,
           size: p.size
         }
@@ -158,6 +175,7 @@ export default defineComponent({
     const handleTableChange = (pagination: any) => {
       console.log("自带的分页参数：" + pagination);
       handleQuery({
+        name: param.value.name,
         page: pagination.current,
         size: pagination.pageSize
       });
@@ -169,6 +187,7 @@ export default defineComponent({
     const modalLoading = ref(false);
     //每一本书
     const ebook = ref({});
+
 
     /**
      * edit按钮方法
@@ -251,9 +270,9 @@ export default defineComponent({
           message.error(data.message);
         }
 
-
       });
     }
+
 
     /**
      * 组件挂载完成后执行的函数
@@ -283,7 +302,9 @@ export default defineComponent({
       handleModalOk,
 
       add,
-      remove
+      remove,
+      param,
+      handleQuery
 
     };
 

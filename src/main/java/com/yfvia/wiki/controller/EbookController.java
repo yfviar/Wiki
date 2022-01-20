@@ -18,13 +18,20 @@ public class EbookController {
     @Autowired
     EbookService ebookService;
 
+    /**
+     * 分页查询电子书
+     */
     @GetMapping("/list")
     public CommonResp list(@Valid EbookQueryReq req) {
+        System.out.println("req:" + req.getSize());
         CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
         resp.setContent(ebookService.list(req));
         return resp;
     }
 
+    /**
+     * 查询所有电子书
+     */
     @GetMapping("/all")
     public CommonResp all() {
         CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
@@ -32,6 +39,9 @@ public class EbookController {
         return resp;
     }
 
+    /**
+     * 保存电子书
+     */
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody EbookSaveReq req) {
 
@@ -40,6 +50,9 @@ public class EbookController {
         return resp;
     }
 
+    /**
+     * 根据id删除电子书
+     */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
         Boolean res = ebookService.delete(id);
@@ -51,6 +64,17 @@ public class EbookController {
             resp.setMessage("删除成功");
         }
 
+        return resp;
+    }
+
+    /**
+     * 通过名称查询电子书
+     */
+    @GetMapping("/query")
+    public CommonResp query(@Valid EbookQueryReq req) {
+        System.out.println("name:" + req.getName() + req.getSize());
+
+        CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
         return resp;
     }
 }

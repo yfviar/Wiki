@@ -101,7 +101,10 @@ public class EbookService {
         if (ObjectUtils.isEmpty(ebook)) {
             return false;
         }
+
         Ebook newEbook = CopyUtil.copy(req, Ebook.class);
+        newEbook.setId(Long.valueOf(req.getId()));
+
         int res = ebookMapper.updateByPrimaryKey(newEbook);
         if (res != 1) return false;
         return true;
@@ -120,4 +123,19 @@ public class EbookService {
         return true;
     }
 
+    /**
+     * 根据名字模糊查询电子书
+     */
+    public PageResp<EbookQueryResp> query(String name) {
+        EbookExample ebookExample = new EbookExample();
+        EbookExample.Criteria criteria = ebookExample.createCriteria();
+
+        if (!ObjectUtils.isEmpty(name)) {
+            criteria.andNameLike(name);
+        }
+        List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
+
+
+        return null;
+    }
 }
