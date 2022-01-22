@@ -122,20 +122,4 @@ public class EbookService {
 
         return true;
     }
-
-    /**
-     * 根据名字模糊查询电子书
-     */
-    public PageResp<EbookQueryResp> query(String name) {
-        EbookExample ebookExample = new EbookExample();
-        EbookExample.Criteria criteria = ebookExample.createCriteria();
-
-        if (!ObjectUtils.isEmpty(name)) {
-            criteria.andNameLike(name);
-        }
-        List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
-
-
-        return null;
-    }
 }
