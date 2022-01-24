@@ -50,11 +50,21 @@
       <a-form-item label="名称">
         <a-input v-model:value="category.name"/>
       </a-form-item>
+      <a-form-item label="父分类">
+        <!--        <a-input v-model:value="category.parent"/>-->
+        <a-select
+            ref="select"
+            v-model:value="category.parent"
+            :firstActiveValue="0"
+        >
+          <a-select-option value="0">无</a-select-option>
+          <a-select-option v-for="level in level1" :key="level.id" :value="level.id" :disabled="category.id===level.id">
+            {{ level.name }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
       <a-form-item label="顺序">
         <a-input v-model:value="category.sort"/>
-      </a-form-item>
-      <a-form-item label="父分类">
-        <a-input v-model:value="category.parent"/>
       </a-form-item>
     </a-form>
   </a-modal>
