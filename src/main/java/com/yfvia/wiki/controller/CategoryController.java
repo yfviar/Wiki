@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/category")
@@ -19,7 +20,7 @@ public class CategoryController {
     CategoryService categoryService;
 
     /**
-     * 分页查询电子书
+     * 分页查询分类
      */
     @GetMapping("/list")
     public CommonResp list(@Valid CategoryQueryReq req) {
@@ -30,17 +31,17 @@ public class CategoryController {
     }
 
     /**
-     * 查询所有电子书
+     * 查询所有分类
      */
-//    @GetMapping("/all")
-//    public CommonResp all() {
-//        CommonResp<PageResp<CategoryQueryResp>> resp = new CommonResp<>();
-//        resp.setContent(categoryService.all());
-//        return resp;
-//    }
+    @GetMapping("/all")
+    public CommonResp all() {
+        CommonResp<List<CategoryQueryResp>> resp = new CommonResp<>();
+        resp.setContent(categoryService.all());
+        return resp;
+    }
 
     /**
-     * 保存电子书
+     * 保存分类
      */
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody CategorySaveReq req) {
@@ -51,7 +52,7 @@ public class CategoryController {
     }
 
     /**
-     * 根据id删除电子书
+     * 根据id删除分类
      */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
@@ -68,7 +69,7 @@ public class CategoryController {
     }
 
     /**
-     * 通过名称查询电子书
+     * 通过名称查询分类
      */
     @GetMapping("/query")
     public CommonResp query(@Valid CategoryQueryReq req) {
