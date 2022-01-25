@@ -63,11 +63,12 @@
       <a-form-item label="名称">
         <a-input v-model:value="ebook.name"/>
       </a-form-item>
-      <a-form-item label="分类1">
-        <a-input v-model:value="ebook.category1Id"/>
-      </a-form-item>
-      <a-form-item label="分类2">
-        <a-input v-model:value="ebook.category2Id"/>
+      <a-form-item label="分类">
+        <a-cascader
+            v-model:value="categoryIds"
+            :field-names="{ label: 'name', value: 'id', children: 'children' }"
+            :options="level1"
+        />
       </a-form-item>
       <a-form-item label="描述">
         <a-input v-model:value="ebook.description"/>
@@ -89,9 +90,11 @@ export default defineComponent({
   setup() {
 
     //封装搜索条件
+    // 方法一
     // const param = ref({
     //   name: ''
     // });
+    // 方法二
     const param = ref();
     param.value = {};
     //电子书数据
@@ -187,7 +190,10 @@ export default defineComponent({
     //弹窗提交loading效果
     const modalLoading = ref(false);
     //每一本书
-    const ebook = ref({});
+    const ebook = ref();
+
+    //分类id数组，[100,101]对应：前端开发/Vue
+    const categoryIds = ref();
 
 
     /**
@@ -196,6 +202,8 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       ebook.value = Tool.copy(record);
+      categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id]
+      console.log("ids:================" + categoryIds.value)
     }
 
     /**
@@ -246,12 +254,30 @@ export default defineComponent({
 
     }
 
+
+    /**
+     * 一级分类树，children属性就是二级分类
+     * [{
+     *   id: "",
+     *   name: "",
+     *   children: [{
+     *     id: "",
+     *     name: "",
+     *   }]
+     * }]
+     */
+    const level1 = ref(); // 一级分类树，children属性就是二级分类
+
+
     /**
      * 编辑弹窗确认提交
      */
     const handleModalOk = () => {
 
       modalLoading.value = true;
+      ebook.value.category1Id = categoryIds.value[0];
+      ebook.value.category2Id = categoryIds.value[1];
+
       axios.post("/ebook/save", ebook.value).then((response) => {
         const data = response.data;
         modalLoading.value = false;
@@ -274,15 +300,39 @@ export default defineComponent({
       });
     }
 
+    /**
+     * 查询分类
+     */
+    const queryCategory = () => {
+      loading.value = true;
+      axios.get("/category/all").then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success) {
+          const categorys = data.content;
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys, 0);
+          console.log("树形结构：", level1.value);
+        } else {
+          message.error(data.message);
+        }
+      });
+    }
+
 
     /**
      * 组件挂载完成后执行的函数
      */
     onMounted(() => {
+      //查询所有分类
+      queryCategory();
+
       handleQuery({
         page: 1,
         size: pagination.value.pageSize
       });
+
+
     });
 
 
@@ -305,7 +355,9 @@ export default defineComponent({
       add,
       remove,
       param,
-      handleQuery
+      handleQuery,
+      categoryIds,
+      level1
 
     };
 
