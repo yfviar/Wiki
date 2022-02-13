@@ -33,6 +33,10 @@
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar"/>
         </template>
+        <!--        分类-->
+        <template v-slot:category="{text,record}">
+          <span>{{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}</span>
+        </template>
         <!--        按钮-->
         <template v-slot:action="{ text,record }">
           <a-space size="small">
@@ -121,14 +125,8 @@ export default defineComponent({
         dataIndex: 'name'
       },
       {
-        title: '分类1',
-        dataIndex: 'category1Id',
-        slots: {customRender: 'category1Id'}
-      },
-      {
-        title: '分类2',
-        dataIndex: 'category2Id',
-        slots: {customRender: 'category2Id'}
+        title: '分类',
+        slots: {customRender: 'category'}
       },
       {
         title: '文档数',
@@ -202,8 +200,7 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       ebook.value = Tool.copy(record);
-      categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id]
-      console.log("ids:================" + categoryIds.value)
+      categoryIds.value = [String(ebook.value.category1Id), String(ebook.value.category2Id)]
     }
 
     /**
@@ -277,6 +274,7 @@ export default defineComponent({
       modalLoading.value = true;
       ebook.value.category1Id = categoryIds.value[0];
       ebook.value.category2Id = categoryIds.value[1];
+      console.log("type::::::::::" + typeof categoryIds.value[0])
 
       axios.post("/ebook/save", ebook.value).then((response) => {
         const data = response.data;
@@ -300,6 +298,8 @@ export default defineComponent({
       });
     }
 
+    let categorys: any;
+
     /**
      * 查询分类
      */
@@ -309,7 +309,7 @@ export default defineComponent({
         loading.value = false;
         const data = response.data;
         if (data.success) {
-          const categorys = data.content;
+          categorys = data.content;
           level1.value = [];
           level1.value = Tool.array2Tree(categorys, 0);
           console.log("树形结构：", level1.value);
@@ -317,6 +317,17 @@ export default defineComponent({
           message.error(data.message);
         }
       });
+    }
+
+    const getCategoryName = (cid: any) => {
+      let result = "";
+      categorys.forEach((item: any) => {
+        if (Number(item.id) === cid) {
+          result = item.name;
+        }
+      });
+
+      return result;
     }
 
 
@@ -357,7 +368,8 @@ export default defineComponent({
       param,
       handleQuery,
       categoryIds,
-      level1
+      level1,
+      getCategoryName
 
     };
 
