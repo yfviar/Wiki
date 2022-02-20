@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class EbookQueryReq extends PageReq{
     private String id;
     private String name;
+    private String categoryId2;
 }

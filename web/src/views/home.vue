@@ -6,11 +6,11 @@
           v-model:openKeys="openKeys"
           mode="inline"
           :style="{ height: '100%', borderRight: 0 }"
+          @click="handleClick"
       >
-        <a-menu-item key="1">
+        <a-menu-item key="welcome">
           <template #icon>
             <mail-outlined/>
-            <!--            <user-outlined/>-->
           </template>
           <span>欢迎</span>
         </a-menu-item>
@@ -37,7 +37,13 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
+
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>欢迎使用一木之禾知识库</h1>
+      </div>
+
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"
+              :data-source="ebooks">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
@@ -57,6 +63,8 @@
           </a-list-item>
         </template>
       </a-list>
+
+
     </a-layout-content>
   </a-layout>
 </template>
@@ -102,8 +110,37 @@ export default defineComponent({
     //加载分类
     const loading = ref(false);
 
+    const handleQueryEbook = () => {
+      //查询电子书
+      axios.get("/ebook/list", {
+        params: {
+          page: 1,
+          size: 1000,
+          categoryId2: categoryId2.value
+        }
+      }).then((response) => {
+        const data = response.data;
+        ebooks.value = data.content.list;
+      });
+    }
+
     //分类数据
     const categorys = ref();
+
+    const categoryId2 = ref();
+
+    const isShowWelcome = ref(true);
+
+    const handleClick = (value: any) => {
+      // console.log("click", value)
+      isShowWelcome.value = value.key == "welcome";
+      categoryId2.value = value.key;
+
+      if (categoryId2.value != 'welcome') {
+        handleQueryEbook();
+      }
+
+    }
 
 
     onMounted(() => {
@@ -129,11 +166,11 @@ export default defineComponent({
           level1.value = Tool.array2Tree(categorys.value, 0);
           console.log("树形结构：", level1);
 
-          //查询电子书
-          axios.get("/ebook/all", {}).then((response) => {
-            const data = response.data;
-            ebooks.value = data.content.list;
-          });
+
+          console.log(categoryId2.value);
+
+          // handleQueryEbook();
+
         } else {
           message.error(data.message);
         }
@@ -149,6 +186,8 @@ export default defineComponent({
       actions,
       ebooks,
       level1,
+      isShowWelcome,
+      handleClick,
       ebooks2: toRef(ebooks1, "books")
     };
   },
