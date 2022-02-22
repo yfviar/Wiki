@@ -77,13 +77,14 @@ import axios from "axios";
 import {Modal, message} from 'ant-design-vue';
 import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import {Tool} from "@/util/tool";
-
-import type {TreeSelectProps} from 'ant-design-vue';
+import {useRoute} from "vue-router";
 
 
 export default defineComponent({
   name: 'AdminDoc',
   setup() {
+
+    const route = useRoute();
 
     //封装搜索条件
     // const param = ref({
@@ -156,14 +157,14 @@ export default defineComponent({
 
           //  遍历子节点
           const children = node.children;
-          if (!Tool.isEmpty(children)) {
+          if (Tool.isNotEmpty(children)) {
             for (let j = 0; j < children.length; j++) {
               setDisabled(children, children[j].id);
             }
           }
         } else {
           let children = node.children;
-          if (Tool.isEmpty(children)) {
+          if (Tool.isNotEmpty(children)) {
             setDisabled(children, id);
           }
         }
@@ -225,7 +226,9 @@ export default defineComponent({
      */
     const add = () => {
       modalVisible.value = true;
-      doc.value = {};
+      doc.value = {
+        ebookId: route.query.ebookId
+      };
 
       treeSelectData.value = Tool.copy(level1.value);
 
@@ -233,11 +236,42 @@ export default defineComponent({
 
 
     }
+
+
+    const ids: Array<String> = [];
+    /**
+     * 获取需要被删除的当前id，及子孙id
+     */
+    const getDeleteIds = (treeSelectData: any, id: any) => {
+      for (let i = 0; i < treeSelectData.length; i++) {
+        const node = treeSelectData[i];
+        if (node.id === id) {
+          console.log("delete", node);
+          ids.push(id);
+          //  遍历子节点
+          const children = node.children;
+          if (Tool.isNotEmpty(children)) {
+            for (let j = 0; j < children.length; j++) {
+              getDeleteIds(children, children[j].id);
+            }
+          }
+        } else {
+          let children = node.children;
+          if (Tool.isNotEmpty(children)) {
+            getDeleteIds(children, id);
+          }
+        }
+      }
+    }
+
     /**
      * 删除
      */
 
     const remove = (id: number) => {
+
+      getDeleteIds(level1.value, id);
+
 
       Modal.confirm({
         title: '删除后不可恢复，确认删除？',
@@ -246,7 +280,7 @@ export default defineComponent({
         okType: 'danger',
         cancelText: '取消',
         onOk() {
-          axios.delete("doc/delete/" + id).then((response) => {
+          axios.delete("doc/delete/" + ids.join(",")).then((response) => {
             const data = response.data;
             if (data.success) {
               Modal.success({

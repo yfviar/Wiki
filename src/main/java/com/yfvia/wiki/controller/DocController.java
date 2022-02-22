@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -54,16 +55,13 @@ public class DocController {
     /**
      * 根据id删除文档
      */
-    @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable Long id) {
-        Boolean res = docService.delete(id);
+    @DeleteMapping("/delete/{ids}")
+    public CommonResp delete(@PathVariable String ids) {
+
+        List<String> list = Arrays.asList(ids.split(","));
+        docService.delete(list);
         CommonResp resp = new CommonResp();
-        if (!res) {
-            resp.setMessage("删除失败");
-            resp.setSuccess(false);
-        } else {
-            resp.setMessage("删除成功");
-        }
+
 
         return resp;
     }

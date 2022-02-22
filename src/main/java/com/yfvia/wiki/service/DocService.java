@@ -125,8 +125,24 @@ public class DocService {
      */
     public Boolean delete(Long id) {
         if (ObjectUtils.isEmpty(id)) return false;
-
         int res = docMapper.deleteByPrimaryKey(id);
+        if (res != 1) return false;
+
+        return true;
+    }
+
+    /**
+     * 删除文档
+     */
+    public Boolean delete(List<String> ids) {
+        if (ObjectUtils.isEmpty(ids)) return false;
+
+        DocExample docExample = new DocExample();
+        DocExample.Criteria criteria = docExample.createCriteria();
+        criteria.andIdIn(ids);
+
+        int res = docMapper.deleteByExample(docExample);
+        System.out.println("res:====================" + res);
         if (res != 1) return false;
 
         return true;
