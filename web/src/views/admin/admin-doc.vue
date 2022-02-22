@@ -51,17 +51,18 @@
         <a-input v-model:value="doc.name"/>
       </a-form-item>
       <a-form-item label="父文档">
-        <!--        <a-input v-model:value="doc.parent"/>-->
-        <a-select
-            ref="select"
+        <a-tree-select
             v-model:value="doc.parent"
-            :firstActiveValue="0"
+            show-search
+            style="width: 100%"
+            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+            placeholder="请选择"
+            allow-clear
+            tree-default-expand-all
+            :tree-data="treeSelectData"
+            :replaceFields="{ label:'name', key:'id', value: 'id' }"
         >
-          <a-select-option value="0">无</a-select-option>
-          <a-select-option v-for="level in level1" :key="level.id" :value="level.id" :disabled="doc.id===level.id">
-            {{ level.name }}
-          </a-select-option>
-        </a-select>
+        </a-tree-select>
       </a-form-item>
       <a-form-item label="顺序">
         <a-input v-model:value="doc.sort"/>
@@ -76,6 +77,8 @@ import axios from "axios";
 import {Modal, message} from 'ant-design-vue';
 import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import {Tool} from "@/util/tool";
+
+import type {TreeSelectProps} from 'ant-design-vue';
 
 
 export default defineComponent({
@@ -136,6 +139,38 @@ export default defineComponent({
     const level1 = ref(); // 一级文档树，children属性就是二级文档
     level1.value = [];
 
+
+    const treeSelectData = ref();
+    treeSelectData.value = [];
+
+    /**
+     * 将某节点和其子孙节点设置为disabled
+     */
+
+    const setDisabled = (treeSelectData: any, id: any) => {
+      for (let i = 0; i < treeSelectData.length; i++) {
+        const node = treeSelectData[i];
+        if (node.id === id) {
+          console.log("disabled", node);
+          node.disabled = true;
+
+          //  遍历子节点
+          const children = node.children;
+          if (!Tool.isEmpty(children)) {
+            for (let j = 0; j < children.length; j++) {
+              setDisabled(children, children[j].id);
+            }
+          }
+        } else {
+          let children = node.children;
+          if (Tool.isEmpty(children)) {
+            setDisabled(children, id);
+          }
+        }
+      }
+    }
+
+
     /**
      * 数据查询
      */
@@ -160,15 +195,9 @@ export default defineComponent({
         }
       });
     };
-    /**
-     * 处理分页方法
-     */
-        // const handleTableChange = (pagination: any) => {
-        //   console.log("自带的分页参数：" + pagination);
-        //   handleQuery();
-        // };
 
-        //显示弹窗
+
+    //显示弹窗
     const modalVisible = ref(false);
     //弹窗提交loading效果
     const modalLoading = ref(false);
@@ -182,6 +211,13 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       doc.value = Tool.copy(record);
+
+      treeSelectData.value = Tool.copy(level1.value);
+
+      setDisabled(treeSelectData.value, record.id);
+
+      treeSelectData.value.unshift({id: 0, name: '无'});
+
     }
 
     /**
@@ -190,6 +226,12 @@ export default defineComponent({
     const add = () => {
       modalVisible.value = true;
       doc.value = {};
+
+      treeSelectData.value = Tool.copy(level1.value);
+
+      treeSelectData.value.unshift({id: 0, name: '无'});
+
+
     }
     /**
      * 删除
@@ -281,7 +323,9 @@ export default defineComponent({
       add,
       remove,
       param,
-      handleQuery
+      handleQuery,
+      treeSelectData
+
 
     };
 

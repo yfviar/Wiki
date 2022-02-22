@@ -97,6 +97,7 @@ public class DocService {
             Doc doc = CopyUtil.copy(req, Doc.class);
             doc.setId(snowFlake.nextId());
             doc.setParent(Long.valueOf(req.getParent()));
+            doc.setEbookId(Long.valueOf(req.getEbookId()));
             int res = docMapper.insert(doc);
             if (res != 1) return false;
             return true;
@@ -108,6 +109,7 @@ public class DocService {
         }
 
         Doc newDoc = CopyUtil.copy(req, Doc.class);
+        System.out.println(req.getParent());
         newDoc.setId(Long.valueOf(req.getId()));
         newDoc.setParent(Long.valueOf(req.getParent()));
         newDoc.setEbookId(Long.valueOf(req.getEbookId()));
