@@ -4,7 +4,7 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-row>
+      <a-row :gutter="24">
         <a-col :span="8">
 
           <div>
@@ -24,8 +24,11 @@
               :data-source="level1"
               :loading="loading"
               :pagination="false"
-
+              size="small"
           >
+            <template v-slot:name="{text,record}">
+              {{ record.sort }} {{ text }}
+            </template>
             <!--        按钮-->
             <template v-slot:action="{ text,record }">
               <a-space size="small">
@@ -42,17 +45,23 @@
 
         </a-col>
         <a-col :span="16">
+
+          <a-button type="primary" @click="handleSave()" size="large">
+            保存
+          </a-button>
+          <hr>
+
           <a-form :model="doc" :label-col="{span:6}">
-            <a-form-item label="名称">
-              <a-input v-model:value="doc.name"/>
+            <a-form-item>
+              <a-input v-model:value="doc.name" placeholder="名称"/>
             </a-form-item>
-            <a-form-item label="父文档">
+            <a-form-item>
               <a-tree-select
                   v-model:value="doc.parent"
                   show-search
                   style="width: 100%"
                   :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                  placeholder="请选择"
+                  placeholder="请选择父文档"
                   allow-clear
                   tree-default-expand-all
                   :tree-data="treeSelectData"
@@ -60,8 +69,8 @@
               >
               </a-tree-select>
             </a-form-item>
-            <a-form-item label="顺序">
-              <a-input v-model:value="doc.sort"/>
+            <a-form-item>
+              <a-input v-model:value="doc.sort" placeholder="顺序"/>
             </a-form-item>
             <a-form-item>
               <div id="content"></div>
@@ -72,15 +81,6 @@
 
     </a-layout-content>
   </a-layout>
-
-<!--  <a-modal-->
-<!--      title="文档表单"-->
-<!--      v-model:visible="modalVisible"-->
-<!--      v-model:confirm-loading="modalLoading"-->
-<!--      @ok="handleModalOk"-->
-<!--  >-->
-<!--    -->
-<!--  </a-modal>-->
 </template>
 
 <script lang="ts">
@@ -110,28 +110,15 @@ export default defineComponent({
     //文档数据
     const docs = ref();
 
-    //分页
-    // const pagination = ref({
-    //   current: 1,
-    //   pageSize: 10,
-    //   total: 0
-    // });
     //加载文档
     const loading = ref(false);
     //文档列
+
     const columns = [
       {
         title: '名称',
-        dataIndex: 'name'
-      },
-      {
-        title: '父文档',
-        key: 'parent',
-        dataIndex: 'parent'
-      },
-      {
-        title: '顺序',
-        dataIndex: 'sort'
+        dataIndex: 'name',
+        slots: {customRender: 'name'}
       },
       {
         title: 'Action',
@@ -222,6 +209,7 @@ export default defineComponent({
 
 
     const editor = new E('#content');
+    editor.config.zIndex = 0;
 
     /**
      * edit按钮方法
@@ -236,9 +224,6 @@ export default defineComponent({
       setDisabled(treeSelectData.value, record.id);
 
       treeSelectData.value.unshift({id: 0, name: '无'});
-      setTimeout(function () {
-        editor.create()
-      }, 100);
     }
 
     /**
@@ -254,9 +239,6 @@ export default defineComponent({
       treeSelectData.value = Tool.copy(level1.value);
 
       treeSelectData.value.unshift({id: 0, name: '无'});
-      setTimeout(function () {
-        editor.create()
-      }, 100);
 
     }
 
@@ -331,7 +313,7 @@ export default defineComponent({
     /**
      * 编辑弹窗确认提交
      */
-    const handleModalOk = () => {
+    const handleSave = () => {
 
       modalLoading.value = true;
       axios.post("/doc/save", doc.value).then((response) => {
@@ -359,7 +341,7 @@ export default defineComponent({
      */
     onMounted(() => {
       handleQuery();
-      // editor.create();
+      editor.create();
     });
 
 
@@ -376,7 +358,7 @@ export default defineComponent({
       modalLoading,
       doc,
       edit,
-      handleModalOk,
+      handleSave,
 
       add,
       remove,
