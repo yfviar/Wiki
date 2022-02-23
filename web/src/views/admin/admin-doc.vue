@@ -19,14 +19,17 @@
             </a-space>
           </div>
           <a-table
+              v-if="level1.length > 0"
               :columns="columns"
               :row-key="record => record.id"
               :data-source="level1"
               :loading="loading"
               :pagination="false"
               size="small"
+              :defaultExpandAllRows="true"
           >
-            <template v-slot:name="{text,record}">
+
+            <template #name="{text,record}">
               {{ record.sort }} {{ text }}
             </template>
             <!--        按钮-->
@@ -46,7 +49,8 @@
         </a-col>
         <a-col :span="16">
 
-          <a-button type="primary" @click="handleSave()" size="large">
+          <a-button type="primary" @click="handleSave()" size="large"
+                    :disabled="doc.name==null||doc.sort==null||doc.parent==null">
             保存
           </a-button>
           <hr>
@@ -97,6 +101,8 @@ import E from 'wangeditor'
 export default defineComponent({
   name: 'AdminDoc',
   setup() {
+
+    const buttonHidden = ref(true);
 
 
     const route = useRoute();
@@ -200,10 +206,6 @@ export default defineComponent({
     };
 
 
-    //显示弹窗
-    const modalVisible = ref(false);
-    //弹窗提交loading效果
-    const modalLoading = ref(false);
     //每一本书
     const doc = ref({});
 
@@ -216,7 +218,6 @@ export default defineComponent({
      */
     const edit = (record: any) => {
 
-      modalVisible.value = true;
       doc.value = Tool.copy(record);
 
       treeSelectData.value = Tool.copy(level1.value);
@@ -231,7 +232,7 @@ export default defineComponent({
      */
     const add = () => {
 
-      modalVisible.value = true;
+
       doc.value = {
         ebookId: route.query.ebookId
       };
@@ -315,14 +316,14 @@ export default defineComponent({
      */
     const handleSave = () => {
 
-      modalLoading.value = true;
+
       axios.post("/doc/save", doc.value).then((response) => {
         const data = response.data;
-        modalLoading.value = false;
+
 
         //如果成功了
         if (data.success) {
-          modalVisible.value = false;
+
           Modal.success({
             title: '添加或修改成功'
           });
@@ -354,8 +355,7 @@ export default defineComponent({
       columns,
       loading,
 
-      modalVisible,
-      modalLoading,
+
       doc,
       edit,
       handleSave,
@@ -364,7 +364,8 @@ export default defineComponent({
       remove,
       param,
       handleQuery,
-      treeSelectData
+      treeSelectData,
+      buttonHidden
 
 
     };
