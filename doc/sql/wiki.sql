@@ -46,12 +46,6 @@ INSERT INTO ebook (id, name, category1_id, category2_id, description, cover, doc
 INSERT INTO ebook (id, name, category1_id, category2_id, description, cover, doc_count, view_count, vote_count) VALUES (4, 'MySQL 入门教程', 4, 4, '零基础入门 MySQL 开发，企业级应用开发最佳首选框架', '/image/mysql.png', 65, 4235, 427);
 INSERT INTO ebook (id, name, category1_id, category2_id, description, cover, doc_count, view_count, vote_count) VALUES (5, 'Oracle 入门教程', 5, 5, '零基础入门 Oracle 开发，企业级应用开发最佳首选框架', '/image/oracle.png', 65, 543, 321);
 
-drop table if exists `content`;
-create table `content` (
-                           `id` bigint not null comment '文档id',
-                           `content` mediumtext not null comment '内容',
-                           primary key (`id`)
-)engine=innodb default charset=utf8mb4 comment='文档内容';
 
 drop table if exists `doc`;
 create table `doc` (
@@ -72,6 +66,14 @@ insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) VAL
 insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) VALUES (5, 1, 3, '文档2.2', 2, 0, 0);
 insert into `doc` (id, ebook_id, parent, name, sort, view_count, vote_count) VALUES (6, 1, 5, '文档2.2.1', 1, 0, 0);
 
+
+
+drop table if exists `content`;
+create table `content` (
+                           `id` bigint not null comment '文档id',
+                           `content` mediumtext not null comment '内容',
+                           primary key (`id`)
+)engine=innodb default charset=utf8mb4 comment='文档内容';
 
 drop table if exists `user`;
 create table `user` (

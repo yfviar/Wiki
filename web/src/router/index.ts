@@ -2,7 +2,6 @@ import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
 import Home from '../views/home.vue'
 import About from '../views/about.vue'
 import AdminEbook from '../views/admin/admin-ebook.vue'
-import AdminEbook1 from '../views/admin/admin-ebook1.vue'
 import AdminCategory from '../views/admin/admin-category.vue'
 import AdminDoc from "@/views/admin/admin-doc.vue";
 

@@ -67,6 +67,9 @@
       <a-form-item label="顺序">
         <a-input v-model:value="doc.sort"/>
       </a-form-item>
+      <a-form-item>
+        <div id="content"></div>
+      </a-form-item>
     </a-form>
   </a-modal>
 </template>
@@ -79,10 +82,13 @@ import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
 
+import E from 'wangeditor'
+
 
 export default defineComponent({
   name: 'AdminDoc',
   setup() {
+
 
     const route = useRoute();
 
@@ -206,10 +212,13 @@ export default defineComponent({
     const doc = ref({});
 
 
+    const editor = new E('#content');
+
     /**
      * edit按钮方法
      */
     const edit = (record: any) => {
+
       modalVisible.value = true;
       doc.value = Tool.copy(record);
 
@@ -218,13 +227,16 @@ export default defineComponent({
       setDisabled(treeSelectData.value, record.id);
 
       treeSelectData.value.unshift({id: 0, name: '无'});
-
+      setTimeout(function () {
+        editor.create()
+      }, 100);
     }
 
     /**
      * 新增
      */
     const add = () => {
+
       modalVisible.value = true;
       doc.value = {
         ebookId: route.query.ebookId
@@ -233,7 +245,9 @@ export default defineComponent({
       treeSelectData.value = Tool.copy(level1.value);
 
       treeSelectData.value.unshift({id: 0, name: '无'});
-
+      setTimeout(function () {
+        editor.create()
+      }, 100);
 
     }
 
@@ -336,6 +350,7 @@ export default defineComponent({
      */
     onMounted(() => {
       handleQuery();
+      // editor.create();
     });
 
 
