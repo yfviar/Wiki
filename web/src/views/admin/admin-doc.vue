@@ -4,74 +4,83 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <div>
-        <a-space size="small">
-          <a-button type="primary" @click="handleQuery()" size="large">
-            刷新
-          </a-button>
+      <a-row>
+        <a-col :span="8">
 
-          <a-button type="danger" @click="add()" size="large">
-            新增
-          </a-button>
-        </a-space>
-      </div>
-      <a-table
-          :columns="columns"
-          :row-key="record => record.id"
-          :data-source="level1"
-          :loading="loading"
-          :pagination="false"
+          <div>
+            <a-space size="small">
+              <a-button type="primary" @click="handleQuery()" size="large">
+                刷新
+              </a-button>
 
-      >
-        <!--        按钮-->
-        <template v-slot:action="{ text,record }">
-          <a-space size="small">
-            <a-button type="primary" @click="edit(record)">
-              编辑
-            </a-button>
-            <a-button type="danger" @click="remove(record.id)">
-              删除
-            </a-button>
-          </a-space>
-        </template>
+              <a-button type="danger" @click="add()" size="large">
+                新增
+              </a-button>
+            </a-space>
+          </div>
+          <a-table
+              :columns="columns"
+              :row-key="record => record.id"
+              :data-source="level1"
+              :loading="loading"
+              :pagination="false"
 
-      </a-table>
+          >
+            <!--        按钮-->
+            <template v-slot:action="{ text,record }">
+              <a-space size="small">
+                <a-button type="primary" @click="edit(record)">
+                  编辑
+                </a-button>
+                <a-button type="danger" @click="remove(record.id)">
+                  删除
+                </a-button>
+              </a-space>
+            </template>
+
+          </a-table>
+
+        </a-col>
+        <a-col :span="16">
+          <a-form :model="doc" :label-col="{span:6}">
+            <a-form-item label="名称">
+              <a-input v-model:value="doc.name"/>
+            </a-form-item>
+            <a-form-item label="父文档">
+              <a-tree-select
+                  v-model:value="doc.parent"
+                  show-search
+                  style="width: 100%"
+                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  placeholder="请选择"
+                  allow-clear
+                  tree-default-expand-all
+                  :tree-data="treeSelectData"
+                  :replaceFields="{ label:'name', key:'id', value: 'id' }"
+              >
+              </a-tree-select>
+            </a-form-item>
+            <a-form-item label="顺序">
+              <a-input v-model:value="doc.sort"/>
+            </a-form-item>
+            <a-form-item>
+              <div id="content"></div>
+            </a-form-item>
+          </a-form>
+        </a-col>
+      </a-row>
 
     </a-layout-content>
   </a-layout>
 
-  <a-modal
-      title="文档表单"
-      v-model:visible="modalVisible"
-      v-model:confirm-loading="modalLoading"
-      @ok="handleModalOk"
-  >
-    <a-form :model="doc" :label-col="{span:6}">
-      <a-form-item label="名称">
-        <a-input v-model:value="doc.name"/>
-      </a-form-item>
-      <a-form-item label="父文档">
-        <a-tree-select
-            v-model:value="doc.parent"
-            show-search
-            style="width: 100%"
-            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-            placeholder="请选择"
-            allow-clear
-            tree-default-expand-all
-            :tree-data="treeSelectData"
-            :replaceFields="{ label:'name', key:'id', value: 'id' }"
-        >
-        </a-tree-select>
-      </a-form-item>
-      <a-form-item label="顺序">
-        <a-input v-model:value="doc.sort"/>
-      </a-form-item>
-      <a-form-item>
-        <div id="content"></div>
-      </a-form-item>
-    </a-form>
-  </a-modal>
+<!--  <a-modal-->
+<!--      title="文档表单"-->
+<!--      v-model:visible="modalVisible"-->
+<!--      v-model:confirm-loading="modalLoading"-->
+<!--      @ok="handleModalOk"-->
+<!--  >-->
+<!--    -->
+<!--  </a-modal>-->
 </template>
 
 <script lang="ts">
