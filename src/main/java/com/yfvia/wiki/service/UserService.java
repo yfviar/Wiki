@@ -8,6 +8,7 @@ import com.yfvia.wiki.exception.BusinessException;
 import com.yfvia.wiki.exception.BusinessExceptionCode;
 import com.yfvia.wiki.mapper.UserMapper;
 import com.yfvia.wiki.req.UserQueryReq;
+import com.yfvia.wiki.req.UserResetPasswordReq;
 import com.yfvia.wiki.req.UserSaveReq;
 import com.yfvia.wiki.resp.UserQueryResp;
 import com.yfvia.wiki.resp.PageResp;
@@ -130,6 +131,16 @@ public class UserService {
         if (res != 1) return false;
 
         return true;
+    }
+
+
+    /**
+     * 修改密码
+     */
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        user.setId(Long.valueOf(req.getId()));
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
 

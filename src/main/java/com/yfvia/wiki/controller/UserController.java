@@ -1,6 +1,9 @@
 package com.yfvia.wiki.controller;
 
+import com.yfvia.wiki.exception.BusinessException;
+import com.yfvia.wiki.exception.BusinessExceptionCode;
 import com.yfvia.wiki.req.UserQueryReq;
+import com.yfvia.wiki.req.UserResetPasswordReq;
 import com.yfvia.wiki.req.UserSaveReq;
 import com.yfvia.wiki.resp.CommonResp;
 import com.yfvia.wiki.resp.UserQueryResp;
@@ -8,6 +11,7 @@ import com.yfvia.wiki.resp.PageResp;
 import com.yfvia.wiki.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -47,6 +51,11 @@ public class UserController {
      */
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody UserSaveReq req) {
+
+        if (req.getPassword().equals("5804e4ac3bfa0ffb14202d543b0d7ac6")) {
+            throw new BusinessException(BusinessExceptionCode.PASSWORD_EMPTY);
+        }
+
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes(StandardCharsets.UTF_8)));
         userService.save(req);
         CommonResp<Boolean> resp = new CommonResp<>();
@@ -77,6 +86,24 @@ public class UserController {
     public CommonResp query(@Valid UserQueryReq req) {
 
         CommonResp<PageResp<UserQueryResp>> resp = new CommonResp<>();
+        return resp;
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param req
+     * @return
+     */
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req) {
+
+        if (req.getPassword().equals("5804e4ac3bfa0ffb14202d543b0d7ac6")) {
+            throw new BusinessException(BusinessExceptionCode.PASSWORD_EMPTY);
+        }
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
         return resp;
     }
 }
