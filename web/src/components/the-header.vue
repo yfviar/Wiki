@@ -72,14 +72,13 @@ declare let KEY: any;
 export default {
   name: "the-header",
   setup() {
-    const loginUser = ref({
-      loginName: "test",
-      password: "test"
-    })
+    const loginUser = ref()
+    loginUser.value = {}
 
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
     const showLoginModal = () => {
+      loginUser.value = {}
       loginModalVisible.value = true;
     };
 
@@ -96,6 +95,7 @@ export default {
 
         } else {
           message.error(data.message);
+          loginUser.value.password = null;
         }
       });
     }
