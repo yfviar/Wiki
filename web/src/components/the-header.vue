@@ -11,7 +11,11 @@
           首页
         </a-menu-item>
       </router-link>
-
+      <router-link to="/admin/user">
+        <a-menu-item key="/admin/user">
+          用户管理
+        </a-menu-item>
+      </router-link>
       <router-link to="/admin/ebook">
         <a-menu-item key="/admin/ebook">
           电子书管理
@@ -22,7 +26,6 @@
           分类管理
         </a-menu-item>
       </router-link>
-
 
 
       <router-link to="/about">
