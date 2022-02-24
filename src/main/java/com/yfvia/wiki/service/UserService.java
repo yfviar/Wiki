@@ -7,9 +7,11 @@ import com.yfvia.wiki.domain.UserExample;
 import com.yfvia.wiki.exception.BusinessException;
 import com.yfvia.wiki.exception.BusinessExceptionCode;
 import com.yfvia.wiki.mapper.UserMapper;
+import com.yfvia.wiki.req.UserLoginReq;
 import com.yfvia.wiki.req.UserQueryReq;
 import com.yfvia.wiki.req.UserResetPasswordReq;
 import com.yfvia.wiki.req.UserSaveReq;
+import com.yfvia.wiki.resp.UserLoginResp;
 import com.yfvia.wiki.resp.UserQueryResp;
 import com.yfvia.wiki.resp.PageResp;
 import com.yfvia.wiki.utils.CopyUtil;
@@ -159,6 +161,28 @@ public class UserService {
             return null;
         } else {
             return userList.get(0);
+        }
+    }
+
+    /**
+     * 登录
+     */
+    public UserLoginResp login(UserLoginReq req) {
+        User userDb = selectByLoginName(req.getLoginName());
+        if (ObjectUtils.isEmpty(userDb)) {
+            // 用户名不存在
+            LOG.info("用户名不存在, {}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        } else {
+            if (userDb.getPassword().equals(req.getPassword())) {
+                // 登录成功
+                UserLoginResp userLoginResp = CopyUtil.copy(userDb, UserLoginResp.class);
+                return userLoginResp;
+            } else {
+                // 密码不对
+                LOG.info("密码不对, 输入密码：{}, 数据库密码：{}", req.getPassword(), userDb.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
         }
     }
 }

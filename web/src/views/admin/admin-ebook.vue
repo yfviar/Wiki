@@ -280,7 +280,7 @@ export default defineComponent({
       modalLoading.value = true;
       ebook.value.category1Id = categoryIds.value[0];
       ebook.value.category2Id = categoryIds.value[1];
-      console.log("type::::::::::" + typeof categoryIds.value[0])
+
 
       axios.post("/ebook/save", ebook.value).then((response) => {
         const data = response.data;

@@ -167,10 +167,6 @@ export default defineComponent({
           console.log("树形结构：", level1);
 
 
-          console.log(categoryId2.value);
-
-          // handleQueryEbook();
-
         } else {
           message.error(data.message);
         }
