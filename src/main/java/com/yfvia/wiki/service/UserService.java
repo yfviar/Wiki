@@ -112,6 +112,7 @@ public class UserService {
 
 //            后端防修改用户名，设置为空，使用selective不更新空字段
             newUser.setLoginName(null);
+            newUser.setPassword(null);
             int res = userMapper.updateByPrimaryKeySelective(newUser);
             if (res != 1) return false;
             return true;
