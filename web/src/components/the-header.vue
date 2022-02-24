@@ -6,34 +6,35 @@
         mode="horizontal"
         :style="{ lineHeight: '64px' }"
     >
-      <router-link to="/">
-        <a-menu-item key="/">
+      <a-menu-item key="/">
+        <router-link to="/">
           首页
-        </a-menu-item>
-      </router-link>
-      <router-link to="/admin/user">
-        <a-menu-item key="/admin/user">
+        </router-link>
+      </a-menu-item>
+
+      <a-menu-item key="/admin/user">
+        <router-link to="/admin/user">
           用户管理
-        </a-menu-item>
-      </router-link>
-      <router-link to="/admin/ebook">
-        <a-menu-item key="/admin/ebook">
+        </router-link>
+      </a-menu-item>
+
+      <a-menu-item key="/admin/ebook">
+        <router-link to="/admin/ebook">
           电子书管理
-        </a-menu-item>
-      </router-link>
-      <router-link to="/admin/category">
-        <a-menu-item key="/admin/category">
+        </router-link>
+      </a-menu-item>
+
+      <a-menu-item key="/admin/category">
+        <router-link to="/admin/category">
           分类管理
-        </a-menu-item>
+        </router-link>
+      </a-menu-item>
 
-      </router-link>
-
-
-      <router-link to="/about">
-        <a-menu-item key="/about">
+      <a-menu-item key="/about">
+        <router-link to="/about">
           关于我们
-        </a-menu-item>
-      </router-link>
+        </router-link>
+      </a-menu-item>
 
       <a class="login-menu" @click="showLoginModal()">
         <span>登录</span>
@@ -59,8 +60,14 @@
   </a-layout-header>
 </template>
 
-<script>
+<script lang="ts">
 import {ref} from "vue";
+import {message} from "ant-design-vue";
+import axios from "axios";
+
+declare let hexMd5: any;
+declare let KEY: any;
+
 
 export default {
   name: "the-header",
@@ -78,6 +85,19 @@ export default {
 
     const login = () => {
       console.log("开始登陆");
+      loginModalLoading.value = true;
+      loginUser.value.password = hexMd5(loginUser.value.password + KEY);
+      axios.post('/user/login', loginUser.value).then((response) => {
+        loginModalLoading.value = false;
+        const data = response.data;
+        if (data.success) {
+          loginModalVisible.value = false;
+          message.success("登录成功！");
+
+        } else {
+          message.error(data.message);
+        }
+      });
     }
 
     return {
