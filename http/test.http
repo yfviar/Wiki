@@ -15,3 +15,20 @@ GET http://localhost:8888/test/list
 ###
 
 GET http://localhost:8888/demo/list
+
+###
+
+GET http://localhost:8888/redis/get/152234325155385344
+Accept: application/json
+
+###
+GET http://localhost:8888/redis/set/1/2
+Accept: application/json
+
+###
+
+
+GET http://localhost:8888/redis/get/1
+Accept: application/json
+
+###
