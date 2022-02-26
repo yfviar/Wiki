@@ -1,44 +1,39 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo"/>
+    <div class="logo"></div>
     <a-menu
         theme="dark"
         mode="horizontal"
         :style="{ lineHeight: '64px' }"
     >
+
       <a-menu-item key="/">
-        <router-link to="/">
-          首页
-        </router-link>
+        <router-link to="/">首页</router-link>
       </a-menu-item>
-
-      <a-menu-item key="/admin/user">
-        <router-link to="/admin/user">
-          用户管理
-        </router-link>
+      <a-menu-item key="/admin/user" v-if="user.id">
+        <router-link to="/admin/user">用户管理</router-link>
       </a-menu-item>
-
-      <a-menu-item key="/admin/ebook">
-        <router-link to="/admin/ebook">
-          电子书管理
-        </router-link>
+      <a-menu-item key="/admin/ebook" v-if="user.id">
+        <router-link to="/admin/ebook">电子书管理</router-link>
       </a-menu-item>
-
-      <a-menu-item key="/admin/category">
-        <router-link to="/admin/category">
-          分类管理
-        </router-link>
+      <a-menu-item key="/admin/category" v-if="user.id">
+        <router-link to="/admin/category">分类管理</router-link>
       </a-menu-item>
-
       <a-menu-item key="/about">
-        <router-link to="/about">
-          关于我们
-        </router-link>
+        <router-link to="/about">关于我们</router-link>
       </a-menu-item>
 
-      <a class="login-menu" @click="showLoginModal()">
-        <span>登录</span>
-      </a>
+      <div class="login">
+        <a class="login-menu" v-show="user.id">
+          <span>退出登录</span>
+        </a>
+        <a class="login-menu" v-show="user.id">
+          <span>您好：{{ user.name }}</span>
+        </a>
+        <a class="login-menu" v-show="!user.id" @click="showLoginModal()">
+          <span>登录</span>
+        </a>
+      </div>
     </a-menu>
 
     <a-modal
@@ -61,9 +56,11 @@
 </template>
 
 <script lang="ts">
-import {ref} from "vue";
-import {message} from "ant-design-vue";
+import {createVNode, ref} from "vue";
+import {message, Modal} from "ant-design-vue";
 import axios from "axios";
+import store from "@/store";
+import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -75,10 +72,13 @@ export default {
     const loginUser = ref()
     loginUser.value = {}
 
+    const user = ref();
+    user.value = {};
+
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
     const showLoginModal = () => {
-      loginUser.value = {}
+      loginUser.value = {};
       loginModalVisible.value = true;
     };
 
@@ -91,6 +91,9 @@ export default {
         const data = response.data;
         if (data.success) {
           loginModalVisible.value = false;
+          console.log("data:-----" + JSON.stringify(data.content));
+          user.value = data.content;
+          store.commit("setUser", user.value);
           message.success("登录成功！");
 
         } else {
@@ -100,12 +103,42 @@ export default {
       });
     }
 
+
+    // const logout = () => {
+    //
+    //   Modal.confirm({
+    //     title: '删除后不可恢复，确认删除？',
+    //     icon: createVNode(ExclamationCircleOutlined),
+    //     okText: '确定',
+    //     okType: 'danger',
+    //     cancelText: '取消',
+    //     onOk() {
+    //       axios.delete("/user/logout/" + + user.value.token).then((response) => {
+    //         const data = response.data;
+    //         if (data.success) {
+    //           Modal.success({
+    //             title: '删除成功'
+    //           });
+    //         } else {
+    //           Modal.error({
+    //             title: '删除失败'
+    //           });
+    //         }
+    //       });
+    //     },
+    //     onCancel() {
+    //       console.log('取消');
+    //     },
+    //   });
+    // }
+
     return {
       loginModalVisible,
       loginModalLoading,
       loginUser,
       login,
       showLoginModal,
+      user,
     }
 
   }
@@ -113,8 +146,26 @@ export default {
 </script>
 
 <style scoped>
-.login-menu {
-  float: right;
+.logo {
+  width: 120px;
+  height: 31px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px 28px 16px 0;
+  float: left;
   color: white;
+  font-size: 18px;
+}
+
+.login {
+  position: absolute;
+  right: 50px;
+  color: white;
+  padding-left: 10px;
+}
+
+.login-menu {
+  color: white;
+  padding-left: 10px;
+
 }
 </style>
