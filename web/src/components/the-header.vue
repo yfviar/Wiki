@@ -56,11 +56,11 @@
 </template>
 
 <script lang="ts">
-import {createVNode, ref} from "vue";
-import {message, Modal} from "ant-design-vue";
+import {computed, ref} from "vue";
+import {message} from "ant-design-vue";
 import axios from "axios";
 import store from "@/store";
-import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
+
 
 declare let hexMd5: any;
 declare let KEY: any;
@@ -72,8 +72,8 @@ export default {
     const loginUser = ref()
     loginUser.value = {}
 
-    const user = ref();
-    user.value = {};
+    const user = computed(() => store.state.user);
+
 
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
@@ -91,9 +91,7 @@ export default {
         const data = response.data;
         if (data.success) {
           loginModalVisible.value = false;
-          console.log("data:-----" + JSON.stringify(data.content));
-          user.value = data.content;
-          store.commit("setUser", user.value);
+          store.commit("setUser", data.content);
           message.success("登录成功！");
 
         } else {
