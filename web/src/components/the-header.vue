@@ -24,7 +24,7 @@
       </a-menu-item>
 
       <div class="login">
-        <a class="login-menu" v-show="user.id">
+        <a class="login-menu" v-show="user.id" @click="logout()">
           <span>退出登录</span>
         </a>
         <a class="login-menu" v-show="user.id">
@@ -56,10 +56,11 @@
 </template>
 
 <script lang="ts">
-import {computed, ref} from "vue";
-import {message} from "ant-design-vue";
+import {computed, createVNode, ref} from "vue";
+import {message, Modal} from "ant-design-vue";
 import axios from "axios";
 import store from "@/store";
+import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 
 
 declare let hexMd5: any;
@@ -102,33 +103,35 @@ export default {
     }
 
 
-    // const logout = () => {
-    //
-    //   Modal.confirm({
-    //     title: '删除后不可恢复，确认删除？',
-    //     icon: createVNode(ExclamationCircleOutlined),
-    //     okText: '确定',
-    //     okType: 'danger',
-    //     cancelText: '取消',
-    //     onOk() {
-    //       axios.delete("/user/logout/" + + user.value.token).then((response) => {
-    //         const data = response.data;
-    //         if (data.success) {
-    //           Modal.success({
-    //             title: '删除成功'
-    //           });
-    //         } else {
-    //           Modal.error({
-    //             title: '删除失败'
-    //           });
-    //         }
-    //       });
-    //     },
-    //     onCancel() {
-    //       console.log('取消');
-    //     },
-    //   });
-    // }
+    const logout = () => {
+
+      Modal.confirm({
+        title: '删除后不可恢复，确认删除？',
+        icon: createVNode(ExclamationCircleOutlined),
+        okText: '确定',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk() {
+          axios.get("/user/logout/" + +user.value.token).then((response) => {
+            const data = response.data;
+            if (data.success) {
+
+              store.commit("setUser", {});
+              Modal.success({
+                title: '已退出登录'
+              });
+            } else {
+              Modal.error({
+                title: data.message
+              });
+            }
+          });
+        },
+        onCancel() {
+          console.log('取消');
+        },
+      });
+    }
 
     return {
       loginModalVisible,
@@ -137,6 +140,7 @@ export default {
       login,
       showLoginModal,
       user,
+      logout
     }
 
   }
@@ -162,8 +166,8 @@ export default {
 }
 
 .login-menu {
+  float: right;
   color: white;
   padding-left: 10px;
-
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <a-layout-footer style="text-align: center">
-    一木之禾————你好哇，{{ user.name }}
+    一木之禾<span v-show="user.name">————你好哇，</span>{{ user.name }}
   </a-layout-footer>
 </template>
 
