@@ -61,6 +61,7 @@ import {message, Modal} from "ant-design-vue";
 import axios from "axios";
 import store from "@/store";
 import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
+import router from "@/router";
 
 
 declare let hexMd5: any;
@@ -120,6 +121,7 @@ export default {
               Modal.success({
                 title: '已退出登录'
               });
+              router.push("/");
             } else {
               Modal.error({
                 title: data.message
