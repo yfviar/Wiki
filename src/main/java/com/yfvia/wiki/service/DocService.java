@@ -2,8 +2,10 @@ package com.yfvia.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yfvia.wiki.domain.Content;
 import com.yfvia.wiki.domain.Doc;
 import com.yfvia.wiki.domain.DocExample;
+import com.yfvia.wiki.mapper.ContentMapper;
 import com.yfvia.wiki.mapper.DocMapper;
 import com.yfvia.wiki.req.DocQueryReq;
 import com.yfvia.wiki.req.DocSaveReq;
@@ -25,6 +27,8 @@ import java.util.List;
 public class DocService {
     @Resource
     private DocMapper docMapper;
+    @Resource
+    private ContentMapper contentMapper;
 
     @Autowired
     private SnowFlake snowFlake;
@@ -95,11 +99,18 @@ public class DocService {
 
         if (ObjectUtils.isEmpty(req.getId())) {
             Doc doc = CopyUtil.copy(req, Doc.class);
+            Content content = CopyUtil.copy(req, Content.class);
             doc.setId(snowFlake.nextId());
             doc.setParent(Long.valueOf(req.getParent()));
             doc.setEbookId(Long.valueOf(req.getEbookId()));
+
+            content.setId(doc.getId());
+
             int res = docMapper.insert(doc);
             if (res != 1) return false;
+
+            int res2 = contentMapper.insert(content);
+            if (res2 != 1) return false;
             return true;
         }
 
@@ -109,13 +120,22 @@ public class DocService {
         }
 
         Doc newDoc = CopyUtil.copy(req, Doc.class);
-        System.out.println(req.getParent());
         newDoc.setId(Long.valueOf(req.getId()));
         newDoc.setParent(Long.valueOf(req.getParent()));
         newDoc.setEbookId(Long.valueOf(req.getEbookId()));
 
         int res = docMapper.updateByPrimaryKey(newDoc);
         if (res != 1) return false;
+
+        Content newContent = CopyUtil.copy(req, Content.class);
+        newContent.setId(doc.getId());
+
+        int res2 = contentMapper.updateByPrimaryKeyWithBLOBs(newContent);
+        if (res2 == 0) {
+            int res3 = contentMapper.insertSelective(newContent);
+            if (res3 != 1) return false;
+        }
+
         return true;
     }
 
@@ -146,5 +166,11 @@ public class DocService {
         if (res != 1) return false;
 
         return true;
+    }
+
+    public String findContent(Long id) {
+        Content content = contentMapper.selectByPrimaryKey(id);
+
+        return content.getContent();
     }
 }

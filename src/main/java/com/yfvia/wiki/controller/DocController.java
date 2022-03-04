@@ -47,8 +47,11 @@ public class DocController {
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody DocSaveReq req) {
 
-        docService.save(req);
+        Boolean isSuccess = docService.save(req);
         CommonResp<Boolean> resp = new CommonResp<>();
+        if (!isSuccess) {
+            resp.setSuccess(isSuccess);
+        }
         return resp;
     }
 
@@ -75,5 +78,27 @@ public class DocController {
 
         CommonResp<PageResp<DocQueryResp>> resp = new CommonResp<>();
         return resp;
+    }
+
+
+    /**
+     * 获取文档内容
+     */
+    @GetMapping("/find-content/{id}")
+    public CommonResp findContent(@PathVariable Long id) {
+        CommonResp<String> resp = new CommonResp<>();
+        String content = docService.findContent(id);
+        resp.setContent(content);
+        return resp;
+    }
+
+    /**
+     * 点赞
+     */
+    @GetMapping("/vote/{id}")
+    public CommonResp vote(@PathVariable Long id) {
+        CommonResp commonResp = new CommonResp();
+//        docService.vote(id);
+        return commonResp;
     }
 }

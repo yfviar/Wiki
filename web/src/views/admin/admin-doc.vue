@@ -207,7 +207,8 @@ export default defineComponent({
 
 
     //每一本书
-    const doc = ref({});
+    const doc = ref();
+    doc.value = {};
 
 
     const editor = new E('#content');
@@ -225,6 +226,19 @@ export default defineComponent({
       setDisabled(treeSelectData.value, record.id);
 
       treeSelectData.value.unshift({id: 0, name: '无'});
+      //每次情况富文本区
+      editor.txt.clear();
+      //获取富文本内容
+      handleQueryContent();
+    }
+    /**
+     * 获取富文本内容
+     */
+    const handleQueryContent = () => {
+      axios.get("/doc/find-content/" + doc.value.id).then((response) => {
+            editor.txt.html(response.data.content);
+          }
+      )
     }
 
     /**
@@ -232,7 +246,7 @@ export default defineComponent({
      */
     const add = () => {
 
-
+      editor.txt.clear();
       doc.value = {
         ebookId: route.query.ebookId
       };
@@ -244,7 +258,9 @@ export default defineComponent({
     }
 
 
-    const ids: Array<String> = [];
+    const ids
+        :
+        Array<String> = [];
     /**
      * 获取需要被删除的当前id，及子孙id
      */
@@ -315,7 +331,7 @@ export default defineComponent({
      * 编辑弹窗确认提交
      */
     const handleSave = () => {
-
+      doc.value.content = editor.txt.html();
 
       axios.post("/doc/save", doc.value).then((response) => {
         const data = response.data;
@@ -371,7 +387,8 @@ export default defineComponent({
     };
 
   }
-});
+})
+;
 
 </script>
 
