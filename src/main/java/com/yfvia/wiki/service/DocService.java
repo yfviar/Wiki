@@ -7,6 +7,7 @@ import com.yfvia.wiki.domain.Doc;
 import com.yfvia.wiki.domain.DocExample;
 import com.yfvia.wiki.mapper.ContentMapper;
 import com.yfvia.wiki.mapper.DocMapper;
+import com.yfvia.wiki.mapper.DocMapperCust;
 import com.yfvia.wiki.req.DocQueryReq;
 import com.yfvia.wiki.req.DocSaveReq;
 import com.yfvia.wiki.resp.DocQueryResp;
@@ -27,8 +28,9 @@ import java.util.List;
 public class DocService {
     @Resource
     private DocMapper docMapper;
-    @Resource
     private ContentMapper contentMapper;
+    @Resource
+    private DocMapperCust docMapperCust;
 
     @Autowired
     private SnowFlake snowFlake;
@@ -72,14 +74,15 @@ public class DocService {
     /**
      * 查询文档数据
      */
-    public List<DocQueryResp> all() {
+    public List<DocQueryResp> all(Long ebookId) {
         DocExample docExample = new DocExample();
         docExample.setOrderByClause("sort asc");
-        List<Doc> categories = docMapper.selectByExample(docExample);
+        docExample.createCriteria().andEbookIdEqualTo(ebookId);
+        List<Doc> docs = docMapper.selectByExample(docExample);
 
         ArrayList<DocQueryResp> resps = new ArrayList<>();
 
-        for (Doc doc : categories) {
+        for (Doc doc : docs) {
             DocQueryResp copy = CopyUtil.copy(doc, DocQueryResp.class);
             copy.setId(doc.getId().toString());
             copy.setParent(doc.getParent().toString());
@@ -87,7 +90,7 @@ public class DocService {
 
             resps.add(copy);
         }
-
+//        System.out.println("resps============:" + docs);
         return resps;
     }
 
@@ -168,9 +171,18 @@ public class DocService {
         return true;
     }
 
+    /**
+     * 获取富文本内容
+     */
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
-
-        return content.getContent();
+        docMapperCust.increaseViewCount(id);
+        if (ObjectUtils.isEmpty(content)) {
+            return "";
+        } else {
+            return content.getContent();
+        }
     }
+
+
 }

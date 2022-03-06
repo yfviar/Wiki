@@ -76,12 +76,27 @@
             <a-form-item>
               <a-input v-model:value="doc.sort" placeholder="顺序"/>
             </a-form-item>
+
+            <a-form-item>
+              <a-button type="primary" @click="handlePreviewContent()"
+                        :disabled="doc.name==null||doc.sort==null||doc.parent==null">
+                <EyeOutlined/>
+                内容预览
+              </a-button>
+            </a-form-item>
             <a-form-item>
               <div id="content"></div>
             </a-form-item>
           </a-form>
+
+
         </a-col>
       </a-row>
+
+      <a-drawer width="900" placement="right" :closable="false" :visible="drawerVisible" @close="onDrawerClose">
+        <div class="wangeditor" :innerHTML="previewHtml"></div>
+      </a-drawer>
+
 
     </a-layout-content>
   </a-layout>
@@ -155,7 +170,6 @@ export default defineComponent({
     /**
      * 将某节点和其子孙节点设置为disabled
      */
-
     const setDisabled = (treeSelectData: any, id: any) => {
       for (let i = 0; i < treeSelectData.length; i++) {
         const node = treeSelectData[i];
@@ -188,17 +202,20 @@ export default defineComponent({
 
       // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
       level1.value = [];
-
-      axios.get("/doc/all").then((response) => {
+      axios.get("/doc/all/" + route.query.ebookId).then((response) => {
         loading.value = false;
         const data = response.data;
         if (data.success) {
           docs.value = data.content;
-          console.log("原始数组：", docs.value);
+          // console.log("原始数组：", docs.value);
 
           level1.value = [];
           level1.value = Tool.array2Tree(docs.value, 0);
-          console.log("树形结构：", level1);
+          // console.log("树形结构：", level1);
+
+          treeSelectData.value = Tool.copy(level1.value) || [];
+
+          treeSelectData.value.unshift({id: 0, name: '无'});
         } else {
           message.error(data.message);
         }
@@ -208,7 +225,10 @@ export default defineComponent({
 
     //每一本书
     const doc = ref();
-    doc.value = {};
+    // doc.value = {};
+    doc.value = {
+      ebookId: route.query.ebookId
+    };
 
 
     const editor = new E('#content');
@@ -221,6 +241,7 @@ export default defineComponent({
 
       doc.value = Tool.copy(record);
 
+      //一定要重新设置这个树形下拉框！
       treeSelectData.value = Tool.copy(level1.value);
 
       setDisabled(treeSelectData.value, record.id);
@@ -252,15 +273,12 @@ export default defineComponent({
       };
 
       treeSelectData.value = Tool.copy(level1.value);
-
       treeSelectData.value.unshift({id: 0, name: '无'});
 
     }
 
 
-    const ids
-        :
-        Array<String> = [];
+    const ids: Array<String> = [];
     /**
      * 获取需要被删除的当前id，及子孙id
      */
@@ -353,11 +371,30 @@ export default defineComponent({
     }
 
 
+    const drawerVisible = ref(false);
+    const previewHtml = ref();
+
+    /**
+     * 获取内容预览
+     */
+    const handlePreviewContent = () => {
+      const html = editor.txt.html();
+      previewHtml.value = html;
+      drawerVisible.value = true;
+    }
+
+    const onDrawerClose = () => {
+      drawerVisible.value = false;
+    };
+
+
     /**
      * 组件挂载完成后执行的函数
      */
     onMounted(() => {
       handleQuery();
+
+
       editor.create();
     });
 
@@ -381,7 +418,12 @@ export default defineComponent({
       param,
       handleQuery,
       treeSelectData,
-      buttonHidden
+      buttonHidden,
+
+      handlePreviewContent,
+      onDrawerClose,
+      previewHtml,
+      drawerVisible
 
 
     };

@@ -34,10 +34,12 @@ public class DocController {
     /**
      * 查询所有文档
      */
-    @GetMapping("/all")
-    public CommonResp all() {
+    @GetMapping("/all/{ebookId}")
+    public CommonResp all(@PathVariable Long ebookId) {
         CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
-        resp.setContent(docService.all());
+        List<DocQueryResp> list = docService.all(ebookId);
+        System.out.println("List-------------------:" + list);
+        resp.setContent(list);
         return resp;
     }
 

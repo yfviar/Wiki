@@ -1,5 +1,5 @@
 <template>
-  <a-layout-footer style="text-align: center">
+  <a-layout-footer class="footer">
     一木之禾<span v-show="user.name">————你好哇，</span>{{ user.name }}
   </a-layout-footer>
 </template>
@@ -21,5 +21,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+.footer {
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
 </style>
