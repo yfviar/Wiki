@@ -54,7 +54,10 @@
             </template>
             <a-list-item-meta :description="item.description">
               <template #title>
-                <a :href="item.href">{{ item.name }}</a>
+                <!--                <a :href="item.href">{{ item.name }}</a>-->
+                <router-link :to="'/doc?ebookId=' + item.id">
+                  {{ item.name }}
+                </router-link>
               </template>
               <template #avatar>
                 <a-avatar :src="item.cover"/>
@@ -160,11 +163,11 @@ export default defineComponent({
         const data = response.data;
         if (data.success) {
           categorys.value = data.content;
-          console.log("原始数组：", categorys.value);
+          // console.log("原始数组：", categorys.value);
 
           level1.value = [];
           level1.value = Tool.array2Tree(categorys.value, 0);
-          console.log("树形结构：", level1);
+          // console.log("树形结构：", level1);
 
 
         } else {

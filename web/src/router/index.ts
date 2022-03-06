@@ -7,6 +7,7 @@ import AdminDoc from "@/views/admin/admin-doc.vue";
 import AdminUser from "@/views/admin/admin-user.vue";
 import {Tool} from "@/util/tool";
 import store from "@/store";
+import Doc from "@/views/doc.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -14,6 +15,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/',
         name: 'Home',
         component: Home
+    },
+    {
+        path: '/doc',
+        name: 'Doc',
+        component: Doc
     },
     {
         path: '/about',

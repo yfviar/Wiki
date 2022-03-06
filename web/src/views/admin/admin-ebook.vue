@@ -95,6 +95,7 @@ import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import {Tool} from "@/util/tool";
 
 
+
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
@@ -181,7 +182,7 @@ export default defineComponent({
      * 处理分页方法
      */
     const handleTableChange = (pagination: any) => {
-      console.log("自带的分页参数：" + pagination);
+      // console.log("自带的分页参数：" + pagination);
       handleQuery({
         name: param.value.name,
         page: pagination.current,
@@ -206,7 +207,7 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       ebook.value = Tool.copy(record);
-      categoryIds.value = [String(ebook.value.category1Id), String(ebook.value.category2Id)]
+      categoryIds.value = [String(ebook.value.category1Id), String(ebook.value.category2Id)];
     }
 
     /**
@@ -318,7 +319,7 @@ export default defineComponent({
           categorys = data.content;
           level1.value = [];
           level1.value = Tool.array2Tree(categorys, 0);
-          console.log("树形结构：", level1.value);
+          // console.log("树形结构：", level1.value);
         } else {
           message.error(data.message);
         }
