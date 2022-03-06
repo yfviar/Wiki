@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.yfvia.wiki.domain.Content;
 import com.yfvia.wiki.domain.Doc;
 import com.yfvia.wiki.domain.DocExample;
+import com.yfvia.wiki.exception.BusinessException;
+import com.yfvia.wiki.exception.BusinessExceptionCode;
 import com.yfvia.wiki.mapper.ContentMapper;
 import com.yfvia.wiki.mapper.DocMapper;
 import com.yfvia.wiki.mapper.DocMapperCust;
@@ -28,6 +30,7 @@ import java.util.List;
 public class DocService {
     @Resource
     private DocMapper docMapper;
+    @Resource
     private ContentMapper contentMapper;
     @Resource
     private DocMapperCust docMapperCust;
@@ -106,6 +109,8 @@ public class DocService {
             doc.setId(snowFlake.nextId());
             doc.setParent(Long.valueOf(req.getParent()));
             doc.setEbookId(Long.valueOf(req.getEbookId()));
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
 
             content.setId(doc.getId());
 
@@ -176,12 +181,33 @@ public class DocService {
      */
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
+
         docMapperCust.increaseViewCount(id);
         if (ObjectUtils.isEmpty(content)) {
             return "";
         } else {
             return content.getContent();
         }
+    }
+
+    /**
+     * 点赞
+     */
+    public void vote(Long id) {
+        // docMapperCust.increaseVoteCount(id);
+        // 远程IP+doc.id作为key，24小时内不能重复
+//        String ip = RequestContext.getRemoteAddr();
+//        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
+        docMapperCust.increaseVoteCount(id);
+//        } else {
+//            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+//        }
+
+        // 推送消息
+//        Doc docDb = docMapper.selectByPrimaryKey(id);
+//        String logId = MDC.get("LOG_ID");
+//        wsService.sendInfo("【" + docDb.getName() + "】被点赞！", logId);
+        // rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
     }
 
 

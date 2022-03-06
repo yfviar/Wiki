@@ -38,7 +38,7 @@ public class DocController {
     public CommonResp all(@PathVariable Long ebookId) {
         CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
         List<DocQueryResp> list = docService.all(ebookId);
-        System.out.println("List-------------------:" + list);
+//        System.out.println("List-------------------:" + list);
         resp.setContent(list);
         return resp;
     }
@@ -100,7 +100,7 @@ public class DocController {
     @GetMapping("/vote/{id}")
     public CommonResp vote(@PathVariable Long id) {
         CommonResp commonResp = new CommonResp();
-//        docService.vote(id);
+        docService.vote(id);
         return commonResp;
     }
 }

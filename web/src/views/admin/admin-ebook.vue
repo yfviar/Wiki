@@ -98,6 +98,7 @@ import {Tool} from "@/util/tool";
 
 export default defineComponent({
   name: 'AdminEbook',
+  components:{ExclamationCircleOutlined},
   setup() {
 
     //封装搜索条件

@@ -23,8 +23,8 @@ export default defineComponent({
 <style scoped>
 .footer {
   text-align: center;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+/*  position: fixed;*/
+/*  bottom: 0;*/
+/*  width: 100%;*/
 }
 </style>

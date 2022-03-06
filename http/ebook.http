@@ -21,3 +21,6 @@ GET http://localhost:8888/ebook/query?name=Spring&size=200
 
 ###
 GET http://localhost:8888/doc/all/1
+
+###
+GET http://localhost:8888/doc/find-content/1

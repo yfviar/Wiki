@@ -43,9 +43,13 @@ import axios from 'axios';
 import {message} from 'ant-design-vue';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
+import {LikeOutlined} from '@ant-design/icons-vue';
 
 export default defineComponent({
   name: 'Doc',
+  components:{
+    LikeOutlined
+  },
   setup() {
     const route = useRoute();
     const docs = ref();
