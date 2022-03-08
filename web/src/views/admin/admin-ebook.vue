@@ -95,10 +95,9 @@ import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 import {Tool} from "@/util/tool";
 
 
-
 export default defineComponent({
   name: 'AdminEbook',
-  components:{ExclamationCircleOutlined},
+  components: {ExclamationCircleOutlined},
   setup() {
 
     //封装搜索条件
@@ -208,7 +207,9 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       ebook.value = Tool.copy(record);
-      categoryIds.value = [String(ebook.value.category1Id), String(ebook.value.category2Id)];
+      // categoryIds.value = [Number(ebook.value.category1Id), Number(ebook.value.category2Id)];
+      categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
+      // categoryIds.value = [String(ebook.value.category1Id), String(ebook.value.category2Id)];
     }
 
     /**
@@ -330,7 +331,7 @@ export default defineComponent({
     const getCategoryName = (cid: any) => {
       let result = "";
       categorys.forEach((item: any) => {
-        if (Number(item.id) === cid) {
+        if (item.id === cid) {
           result = item.name;
         }
       });

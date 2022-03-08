@@ -272,7 +272,7 @@ export default defineComponent({
         ebookId: route.query.ebookId
       };
 
-      treeSelectData.value = Tool.copy(level1.value);
+      treeSelectData.value = Tool.copy(level1.value) || [];
       treeSelectData.value.unshift({id: 0, name: '无'});
 
     }

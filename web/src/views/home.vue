@@ -47,14 +47,21 @@
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
-          <span v-for="{ type, text } in actions" :key="type">
-            <component :is="type" style="margin-right: 8px"/>
-            {{ text }}
-          </span>
+              <span>
+                <component :is="'FileTextOutlined'" style="margin-right: 8px"/>
+                {{ item.docCount }}
+              </span>
+              <span>
+                <component :is="'EyeOutlined'" style="margin-right: 8px"/>
+                {{ item.viewCount }}
+              </span>
+              <span>
+                <component :is="'LikeOutlined'" style="margin-right: 8px"/>
+                {{ item.voteCount }}
+              </span>
             </template>
             <a-list-item-meta :description="item.description">
               <template #title>
-                <!--                <a :href="item.href">{{ item.name }}</a>-->
                 <router-link :to="'/doc?ebookId=' + item.id">
                   {{ item.name }}
                 </router-link>
@@ -74,7 +81,7 @@
 
 <script lang="ts">
 import {defineComponent, onMounted, ref, reactive, toRef} from 'vue';
-import {StarOutlined, LikeOutlined, MessageOutlined, MailOutlined, UserOutlined} from '@ant-design/icons-vue';
+import {EyeOutlined, LikeOutlined, MailOutlined, UserOutlined, FileTextOutlined} from '@ant-design/icons-vue';
 import axios from "axios";
 import {Tool} from "@/util/tool";
 import {message} from "ant-design-vue";
@@ -83,11 +90,12 @@ import {message} from "ant-design-vue";
 export default defineComponent({
   name: 'Home',
   components: {
-    StarOutlined,
+
+    EyeOutlined,
     LikeOutlined,
-    MessageOutlined,
     MailOutlined,
-    UserOutlined
+    UserOutlined,
+    FileTextOutlined
   },
   setup() {
 
@@ -146,7 +154,6 @@ export default defineComponent({
     }
 
 
-
     /**
      * 数据查询
      */
@@ -174,11 +181,6 @@ export default defineComponent({
       });
     };
 
-    // const actions: Record<string, string>[] = [
-    //   {type: 'StarOutlined', text: '156'},
-    //   {type: 'LikeOutlined', text: '156'},
-    //   {type: 'MessageOutlined', text: '2'},
-    // ];
 
     onMounted(() => {
       handleQuery();

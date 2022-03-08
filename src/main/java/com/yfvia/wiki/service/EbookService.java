@@ -59,6 +59,8 @@ public class EbookService {
         for (Ebook ebook : ebooks) {
             EbookQueryResp copyEbook = CopyUtil.copy(ebook, EbookQueryResp.class);
             copyEbook.setId(ebook.getId().toString());
+            copyEbook.setCategory1Id(ebook.getCategory1Id().toString());
+            copyEbook.setCategory2Id(ebook.getCategory2Id().toString());
             copyList.add(copyEbook);
         }
 
@@ -79,6 +81,8 @@ public class EbookService {
         for (Ebook ebook : ebooks) {
             EbookQueryResp copyEbook = CopyUtil.copy(ebook, EbookQueryResp.class);
             copyEbook.setId(ebook.getId().toString());
+            copyEbook.setCategory1Id(ebook.getCategory1Id().toString());
+            copyEbook.setCategory2Id(ebook.getCategory2Id().toString());
             copyList.add(copyEbook);
         }
 

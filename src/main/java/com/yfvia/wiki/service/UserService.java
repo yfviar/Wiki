@@ -177,7 +177,7 @@ public class UserService {
             if (userDb.getPassword().equals(req.getPassword())) {
                 // 登录成功
                 UserLoginResp userLoginResp = CopyUtil.copy(userDb, UserLoginResp.class);
-                System.out.println("0000000:" + userLoginResp);
+
                 userLoginResp.setId(userDb.getId().toString());
                 return userLoginResp;
             } else {
