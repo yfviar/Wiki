@@ -15,6 +15,8 @@ import com.yfvia.wiki.req.DocSaveReq;
 import com.yfvia.wiki.resp.DocQueryResp;
 import com.yfvia.wiki.resp.PageResp;
 import com.yfvia.wiki.utils.CopyUtil;
+import com.yfvia.wiki.utils.RedisUtil;
+import com.yfvia.wiki.utils.RequestContext;
 import com.yfvia.wiki.utils.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,9 @@ public class DocService {
     private ContentMapper contentMapper;
     @Resource
     private DocMapperCust docMapperCust;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Autowired
     private SnowFlake snowFlake;
@@ -196,12 +201,12 @@ public class DocService {
     public void vote(Long id) {
         // docMapperCust.increaseVoteCount(id);
         // 远程IP+doc.id作为key，24小时内不能重复
-//        String ip = RequestContext.getRemoteAddr();
-//        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
-        docMapperCust.increaseVoteCount(id);
-//        } else {
-//            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
-//        }
+        String ip = RequestContext.getRemoteAddr();
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
+            docMapperCust.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
 
         // 推送消息
 //        Doc docDb = docMapper.selectByPrimaryKey(id);
@@ -211,4 +216,7 @@ public class DocService {
     }
 
 
+    public void updateEbookInfo() {
+
+    }
 }

@@ -3,6 +3,8 @@ package com.yfvia.wiki.aspect;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
 
+import com.yfvia.wiki.utils.RequestContext;
+import com.yfvia.wiki.utils.SnowFlake;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -30,11 +32,17 @@ public class LogAspect {
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
     /** 定义一个切点 */
-    @Pointcut("execution(public * com.yfvia.*.controller..*Controller.*(..))")
+    @Pointcut("execution(public * com.jiawa.*.controller..*Controller.*(..))")
     public void controllerPointcut() {}
+
+    @Resource
+    private SnowFlake snowFlake;
 
     @Before("controllerPointcut()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
+
+        // 增加日志流水号
+        MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
 
         // 开始打印请求日志
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -48,11 +56,13 @@ public class LogAspect {
         LOG.info("类名方法: {}.{}", signature.getDeclaringTypeName(), name);
         LOG.info("远程地址: {}", request.getRemoteAddr());
 
+        RequestContext.setRemoteAddr(getRemoteIp(request));
+
         // 打印请求参数
         Object[] args = joinPoint.getArgs();
-		// LOG.info("请求参数: {}", JSONObject.toJSONString(args));
+        // LOG.info("请求参数: {}", JSONObject.toJSONString(args));
 
-		Object[] arguments  = new Object[args.length];
+        Object[] arguments  = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof ServletRequest
                     || args[i] instanceof ServletResponse
