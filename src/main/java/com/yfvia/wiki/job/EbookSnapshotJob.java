@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-@Component
+//@Component
 public class EbookSnapshotJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(EbookSnapshotJob.class);

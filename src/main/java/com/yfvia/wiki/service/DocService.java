@@ -215,8 +215,10 @@ public class DocService {
         // rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
     }
 
-
+    /**
+     * 更新文档数、点赞数、阅读数
+     */
     public void updateEbookInfo() {
-
+        docMapperCust.updateEbookInfo();
     }
 }

@@ -146,9 +146,7 @@ export default defineComponent({
     }
 
 
-    onMounted(() => {
-      handleQuery();
-    });
+
     /**
      * 数据查询
      */
@@ -176,13 +174,17 @@ export default defineComponent({
       });
     };
 
-    const actions: Record<string, string>[] = [
-      {type: 'StarOutlined', text: '156'},
-      {type: 'LikeOutlined', text: '156'},
-      {type: 'MessageOutlined', text: '2'},
-    ];
+    // const actions: Record<string, string>[] = [
+    //   {type: 'StarOutlined', text: '156'},
+    //   {type: 'LikeOutlined', text: '156'},
+    //   {type: 'MessageOutlined', text: '2'},
+    // ];
+
+    onMounted(() => {
+      handleQuery();
+    });
     return {
-      actions,
+      // actions,
       ebooks,
       level1,
       isShowWelcome,
