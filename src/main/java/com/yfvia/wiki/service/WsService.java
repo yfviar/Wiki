@@ -1,5 +1,6 @@
 package com.yfvia.wiki.service;
 
+import com.yfvia.wiki.utils.SnowFlake;
 import com.yfvia.wiki.websocket.WebSocketServer;
 import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Async;
@@ -11,11 +12,13 @@ import javax.annotation.Resource;
 public class WsService {
 
     @Resource
-    public WebSocketServer webSocketServer;
+    private WebSocketServer webSocketServer;
 
     @Async
     public void sendInfo(String message, String logId) {
         MDC.put("LOG_ID", logId);
         webSocketServer.sendInfo(message);
     }
+
+
 }

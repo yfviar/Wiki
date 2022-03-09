@@ -1,10 +1,13 @@
 package com.yfvia.wiki.websocket;
 
 
+import com.yfvia.wiki.utils.SnowFlake;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.scheduling.annotation.Async;
+import org.slf4j.MDC;
+
 import org.springframework.stereotype.Component;
 
 
@@ -23,15 +26,16 @@ public class WebSocketServer {
      * 每个客户端一个token
      */
     private String token = "";
-
     private static HashMap<String, Session> map = new HashMap<>();
-
 
     /**
      * 连接成功
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("token") String token) {
+
+        //        日志流水号
+        MDC.put("LOG_ID", String.valueOf(new SnowFlake().nextId()));
 
         map.put(token, session);
         this.token = token;
@@ -43,6 +47,8 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose(Session session) {
+        //        日志流水号
+        MDC.put("LOG_ID", String.valueOf(new SnowFlake().nextId()));
 
         map.remove(this.token);
         LOG.info("连接关闭，token：{}，session id：{}！当前连接数：{}", this.token, session.getId(), map.size());
@@ -53,6 +59,8 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message, Session session) {
+        //        日志流水号
+        MDC.put("LOG_ID", String.valueOf(new SnowFlake().nextId()));
 
         LOG.info("收到消息：{}，内容：{}", token, message);
     }
@@ -62,7 +70,8 @@ public class WebSocketServer {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-
+//        日志流水号
+        MDC.put("LOG_ID", String.valueOf(new SnowFlake().nextId()));
         LOG.error("发生错误", error);
     }
 

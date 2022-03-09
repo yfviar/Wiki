@@ -31,9 +31,12 @@ public class LogAspect {
 
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
-    /** 定义一个切点 */
-    @Pointcut("execution(public * com.jiawa.*.controller..*Controller.*(..))")
-    public void controllerPointcut() {}
+    /**
+     * 定义一个切点
+     */
+    @Pointcut("execution(public * com.yfvia.*.controller..*Controller.*(..))")
+    public void controllerPointcut() {
+    }
 
     @Resource
     private SnowFlake snowFlake;
@@ -62,7 +65,7 @@ public class LogAspect {
         Object[] args = joinPoint.getArgs();
         // LOG.info("请求参数: {}", JSONObject.toJSONString(args));
 
-        Object[] arguments  = new Object[args.length];
+        Object[] arguments = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof ServletRequest
                     || args[i] instanceof ServletResponse
@@ -81,6 +84,7 @@ public class LogAspect {
 
     @Around("controllerPointcut()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+
         long startTime = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
         // 排除字段，敏感字段或太长的字段不显示
@@ -95,6 +99,7 @@ public class LogAspect {
 
     /**
      * 使用nginx做反向代理，需要用该方法才能取到真实的远程IP
+     *
      * @param request
      * @return
      */

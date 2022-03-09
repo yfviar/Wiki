@@ -2,8 +2,10 @@ package com.yfvia.wiki.interceptor;
 
 import com.alibaba.fastjson.JSON;
 
+import com.yfvia.wiki.utils.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -25,8 +27,12 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Resource
     private RedisTemplate redisTemplate;
 
+    @Resource
+    private SnowFlake snowFlake;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
         // 打印请求信息
         LOG.info("------------- LoginInterceptor 开始 -------------");
         long startTime = System.currentTimeMillis();
@@ -34,7 +40,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // OPTIONS请求不做校验,
         // 前后端分离的架构, 前端会发一个OPTIONS请求先做预检, 对预检请求不做校验
-        if(request.getMethod().toUpperCase().equals("OPTIONS")){
+        if (request.getMethod().toUpperCase().equals("OPTIONS")) {
             return true;
         }
 
@@ -45,13 +51,13 @@ public class LoginInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
         LOG.info("登录校验开始，token：{}", token);
         if (token == null || token.isEmpty()) {
-            LOG.info( "token为空，请求被拦截" );
+            LOG.info("token为空，请求被拦截");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return false;
         }
         Object object = redisTemplate.opsForValue().get(token);
         if (object == null) {
-            LOG.warn( "token无效，请求被拦截" );
+            LOG.warn("token无效，请求被拦截");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return false;
         } else {
