@@ -18,8 +18,7 @@ import com.yfvia.wiki.utils.CopyUtil;
 import com.yfvia.wiki.utils.RedisUtil;
 import com.yfvia.wiki.utils.RequestContext;
 import com.yfvia.wiki.utils.SnowFlake;
-import com.yfvia.wiki.websocket.WebSocketServer;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -50,8 +49,8 @@ public class DocService {
     @Autowired
     private WsService wsService;
 
-    @Resource
-    private RocketMQTemplate rocketMQTemplate;
+//    @Resource
+//    private RocketMQTemplate rocketMQTemplate;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(DocService.class);
@@ -214,7 +213,7 @@ public class DocService {
         // docMapperCust.increaseVoteCount(id);
         // 远程IP+doc.id作为key，24小时内不能重复
         String ip = RequestContext.getRemoteAddr();
-        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5)) {
             docMapperCust.increaseVoteCount(id);
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
@@ -223,8 +222,8 @@ public class DocService {
         // 推送消息
         Doc docDb = docMapper.selectByPrimaryKey(id);
         String logId = MDC.get("LOG_ID");
-//        wsService.sendInfo("【" + docDb.getName() + "】被点赞！", logId);
-        rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
+        wsService.sendInfo("【" + docDb.getName() + "】被点赞！", logId);
+//        rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
     }
 
     /**
