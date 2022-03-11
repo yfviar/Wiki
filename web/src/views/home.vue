@@ -39,7 +39,7 @@
     >
 
       <div class="welcome" v-show="isShowWelcome">
-        <h1>欢迎使用一木之禾知识库</h1>
+        <the-welcome></the-welcome>
       </div>
 
       <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3 }"
@@ -85,6 +85,7 @@ import {EyeOutlined, LikeOutlined, MailOutlined, UserOutlined, FileTextOutlined}
 import axios from "axios";
 import {Tool} from "@/util/tool";
 import {message} from "ant-design-vue";
+import TheWelcome from "@/components/the-welcome.vue";
 
 
 export default defineComponent({
@@ -95,7 +96,8 @@ export default defineComponent({
     LikeOutlined,
     MailOutlined,
     UserOutlined,
-    FileTextOutlined
+    FileTextOutlined,
+    TheWelcome
   },
   setup() {
 
