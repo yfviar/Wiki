@@ -1,6 +1,7 @@
 package com.yfvia.wiki.job;
 
 
+import com.yfvia.wiki.service.EbookSnapshotService;
 import com.yfvia.wiki.utils.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,13 +11,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-//@Component
+@Component
 public class EbookSnapshotJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(EbookSnapshotJob.class);
 
-//    @Resource
-//    private EbookSnapshotService ebookSnapshotService;
+    @Resource
+    private EbookSnapshotService ebookSnapshotService;
 
     @Resource
     private SnowFlake snowFlake;
@@ -31,7 +32,7 @@ public class EbookSnapshotJob {
         MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
         LOG.info("生成今日电子书快照开始");
         Long start = System.currentTimeMillis();
-//        ebookSnapshotService.genSnapshot();
+        ebookSnapshotService.genSnapshot();
         LOG.info("生成今日电子书快照结束，耗时：{}毫秒", System.currentTimeMillis() - start);
     }
 
