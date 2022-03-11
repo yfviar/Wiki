@@ -17,13 +17,15 @@ public class SpringMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/login",
+                        "/test/**",
+                        "/redis/**",
                         "/user/login",
                         "/category/all",
                         "/ebook/list",
                         "/doc/all/**",
+                        "/doc/vote/**",
                         "/doc/find-content/**",
-                        "/doc/vote/**"
+                        "/ebook-snapshot/**"
 
                 )
         ;
