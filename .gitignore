@@ -1,5 +1,6 @@
 /log/
 /src/main/resources/application.properties
+temp
 
 HELP.md
 target/
