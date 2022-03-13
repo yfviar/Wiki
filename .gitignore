@@ -1,5 +1,6 @@
 /log/
 /src/main/resources/application.properties
+/src/main/resources/application-prod.properties
 temp
 
 HELP.md
